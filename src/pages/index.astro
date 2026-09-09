@@ -59,7 +59,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   .description {
-    /* 기존 auto 제거 */
     margin: 90px 0 0;
 
     color: #555555;
@@ -76,8 +75,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     color: var(--yonsei-blue);
   }
 
+  /* 홈에서는 footer 위 여백을 완전히 제거 */
   :global(.site-footer) {
-    margin-top: 0;
+    margin-top: 0 !important;
   }
 
   @media (max-width: 720px) {
