@@ -1,0 +1,217 @@
+:root {
+  --yonsei-blue: #003876;
+
+  --text: #111111;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+
+  --line: #dedede;
+  --line-light: #eeeeee;
+
+  --background: #ffffff;
+  --surface: #f3f3f3;
+
+  /*
+    기존 1440px → 1220px
+    전체 화면이 조금 더 조밀하게 보이도록 축소
+  */
+  --content-width: 1220px;
+  --side-margin: 40px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  color: var(--text);
+  background: var(--background);
+
+  font-family:
+    Inter,
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================
+   GLOBAL WIDTH
+   ========================================= */
+
+.site-header,
+.site-main,
+.site-footer {
+  width: min(
+    var(--content-width),
+    calc(100% - var(--side-margin) * 2)
+  );
+
+  margin: 0 auto;
+}
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.site-header {
+  height: 92px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-brand {
+  color: var(--text);
+
+  text-decoration: none;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  letter-spacing: -0.01em;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+
+  gap: 30px;
+}
+
+.site-nav a {
+  position: relative;
+
+  color: #777777;
+
+  text-decoration: none;
+
+  font-size: 17px;
+
+  transition: color 160ms ease;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  color: var(--text);
+}
+
+.site-nav a.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: -6px;
+
+  height: 1px;
+
+  background: var(--yonsei-blue);
+}
+
+/* =========================================
+   STANDARD PAGE HEADER
+   ========================================= */
+
+.page-header {
+  padding: 125px 0 115px;
+}
+
+.eyebrow {
+  margin-bottom: 21px;
+
+  color: var(--yonsei-blue);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+}
+
+.page-title {
+  margin: 0;
+
+  /*
+    Research / People / Publications / Photos
+    공통 제목 크기 축소
+  */
+  font-size: clamp(48px, 5.6vw, 86px);
+  font-weight: 500;
+
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.site-footer {
+  margin-top: 110px;
+
+  padding: 20px 0 26px;
+
+  border-top: 1px solid #e9e9e9;
+
+  display: flex;
+  justify-content: flex-end;
+
+  color: var(--text-muted);
+
+  font-size: 14px;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 720px) {
+  :root {
+    --side-margin: 20px;
+  }
+
+  .site-header {
+    height: 76px;
+  }
+
+  .site-brand {
+    font-size: 13px;
+  }
+
+  .site-nav {
+    gap: 14px;
+  }
+
+  .site-nav a {
+    font-size: 12px;
+  }
+
+  .page-header {
+    padding: 82px 0 82px;
+  }
+
+  .page-title {
+    font-size: clamp(48px, 16vw, 70px);
+  }
+
+  .site-footer {
+    margin-top: 85px;
+
+    padding: 18px 0 24px;
+
+    justify-content: flex-end;
+
+    font-size: 11px;
+  }
+}

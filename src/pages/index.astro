@@ -1,17 +1,119 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <section class="hero">
+    <div class="hero-content">
+      <div class="eyebrow">
+        YONSEI UNIVERSITY
+      </div>
+
+      <h1>
+        Shingularity<br />
+        Lab
+      </h1>
+
+      <p class="description">
+        High-Dimensional Statistics
+        <span>×</span>
+        Neural Networks
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    /*
+      Header 108px + Footer 약 70px를 제외한 영역 안에
+      홈 콘텐츠를 전부 넣음.
+    */
+    min-height: calc(100svh - 178px);
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 52px 0 36px;
+  }
+
+  .hero-content {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero .eyebrow {
+  margin-bottom: 58px;
+
+  font-size: 12px;
+}
+
+  h1 {
+  max-width: 900px;
+
+  margin: 0;
+
+  font-size: clamp(58px, 8.5vw, 118px);
+  font-weight: 500;
+
+  line-height: 0.88;
+  letter-spacing: -0.07em;
+}
+
+  .description {
+    margin: auto 0 0;
+
+    color: #555555;
+
+    font-size: clamp(18px, 1.6vw, 24px);
+    font-weight: 400;
+
+    letter-spacing: -0.025em;
+  }
+
+  .description span {
+    padding: 0 10px;
+
+    color: var(--yonsei-blue);
+  }
+
+  /*
+    global.css에는 일반 페이지용으로
+    footer margin-top: 150px가 들어가 있으므로
+    홈에서만 제거.
+  */
+  :global(.site-footer) {
+    margin-top: 0;
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      min-height: calc(100svh - 150px);
+
+      padding: 42px 0 28px;
+    }
+
+    .hero .eyebrow {
+      margin-bottom: 42px;
+    }
+
+    h1 {
+      font-size: clamp(64px, 22vw, 96px);
+    }
+
+    .description {
+      max-width: 300px;
+
+      margin-top: auto;
+
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .description span {
+      padding: 0 5px;
+    }
+  }
+</style>

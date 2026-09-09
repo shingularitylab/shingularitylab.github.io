@@ -1,0 +1,460 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const publications = [
+  {
+    year: 2024,
+    title: "Generative Quantile Regression with Variability Penalty",
+    authors: [
+      { name: "Shijie Wang", highlight: false },
+      { name: "Minsuk Shin", highlight: true },
+      { name: "Ray Bai", highlight: false },
+    ],
+    venue: "Journal of Computational and Graphical Statistics",
+    type: "Journal",
+    paper:
+      "https://www.tandfonline.com/doi/full/10.1080/10618600.2024.2327824",
+  },
+  {
+    year: 2024,
+    title: "Generative Multi-Purpose Sampler for Weighted M-estimation",
+    authors: [
+      { name: "Minsuk Shin", highlight: true },
+      { name: "Shijie Wang", highlight: false },
+      { name: "Jun Liu", highlight: false },
+    ],
+    venue: "Journal of Computational and Graphical Statistics",
+    type: "Journal",
+    paper:
+      "https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2292668",
+  },
+  {
+    year: 2022,
+    title: "Neuronized Priors for Bayesian Sparse Linear Regression",
+    authors: [
+      { name: "Minsuk Shin", highlight: true },
+      { name: "Jun Liu", highlight: false },
+    ],
+    venue: "Journal of the American Statistical Association",
+    type: "Journal",
+    paper:
+      "https://www.tandfonline.com/doi/full/10.1080/01621459.2021.1876710",
+  },
+  {
+    year: 2021,
+    title: "Neural Bootstrapper",
+    authors: [
+      { name: "Minsuk Shin", highlight: true },
+      { name: "Hyungjoo Cho", highlight: false },
+      { name: "Sungbin Lim", highlight: false },
+    ],
+    venue: "Advances in Neural Information Processing Systems (NeurIPS)",
+    type: "Conference",
+    paper: "https://arxiv.org/pdf/2010.01051.pdf",
+  },
+  {
+    year: 2020,
+    title: "Functional Horseshoe Prior for Subspace Shrinkage",
+    authors: [
+      { name: "Minsuk Shin", highlight: true },
+      { name: "Anirban Bhattacharya", highlight: false },
+      { name: "Valen E. Johnson", highlight: false },
+    ],
+    venue: "Journal of the American Statistical Association",
+    type: "Journal",
+    paper:
+      "https://www.tandfonline.com/doi/abs/10.1080/01621459.2019.1654875",
+  },
+];
+
+const years = [...new Set(publications.map((paper) => paper.year))].sort(
+  (a, b) => b - a
+);
+---
+
+<BaseLayout
+  title="Publications"
+  description="Publications from Shingularity Lab, Yonsei University"
+>
+  <!-- =========================================
+       PAGE TITLE
+       ========================================= -->
+
+  <section class="research-header">
+    <h1 class="page-title">Publications</h1>
+  </section>
+
+  <!-- =========================================
+       PUBLICATIONS
+       ========================================= -->
+
+  <section class="publication-list">
+    {
+      years.map((year) => (
+        <div class="year-group">
+          <div class="year">{year}</div>
+
+          <div class="papers">
+            {publications
+              .filter((paper) => paper.year === year)
+              .map((paper) => (
+                <article class="paper">
+                  <div class="paper-main">
+                    <h2>
+                      <a
+                        href={paper.paper}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {paper.title}
+                      </a>
+                    </h2>
+
+                    <p class="authors">
+                      {paper.authors.map((author, index) => (
+                        <>
+                          {author.highlight ? (
+                            <strong>{author.name}</strong>
+                          ) : (
+                            <span>{author.name}</span>
+                          )}
+
+                          {index < paper.authors.length - 1 && ", "}
+                        </>
+                      ))}
+                    </p>
+
+                    <p class="venue">
+                      {paper.venue}
+                    </p>
+                  </div>
+
+                  <div class="paper-meta">
+                    <span class="type">
+                      {paper.type}
+                    </span>
+
+                    <a
+                      class="paper-link"
+                      href={paper.paper}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Paper ↗
+                    </a>
+                  </div>
+                </article>
+              ))}
+          </div>
+        </div>
+      ))
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  /* =========================================
+     PAGE HEADER
+     Research / People와 동일
+     ========================================= */
+
+  .research-header {
+    padding: 58px 0 88px;
+  }
+
+  /* =========================================
+     PUBLICATION LIST
+     ========================================= */
+
+  .publication-list {
+    border-top: none;
+  }
+
+  .year-group {
+    display: grid;
+
+    grid-template-columns:
+      minmax(100px, 190px)
+      minmax(0, 1fr);
+
+    gap: 40px;
+
+    /*
+      연도 그룹 사이 빈 공간 축소
+      기존: 70px 0 86px
+    */
+    padding: 42px 0 42px;
+
+    border-bottom: 1px solid var(--line);
+  }
+
+  /*
+    Publications 바로 아래 첫 2024는
+    위쪽 추가 여백 없이 시작
+  */
+  .year-group:first-child {
+    padding-top: 0;
+  }
+
+  /* =========================================
+     YEAR
+     ========================================= */
+
+  .year {
+    color: var(--yonsei-blue);
+
+    font-size: 28px;
+    font-weight: 700;
+
+    letter-spacing: -0.02em;
+  }
+
+  /* =========================================
+     PAPERS
+     ========================================= */
+
+  .papers {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paper {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      120px;
+
+    gap: 48px;
+
+    /*
+      paper 내용 → 다음 구분선 사이 공간
+      기존 58px에서 축소
+    */
+    padding-bottom: 28px;
+  }
+
+  /*
+    같은 연도 안의 다음 논문
+    구분선 → 논문 사이 공간
+  */
+  .paper + .paper {
+    padding-top: 28px;
+
+    border-top: 1px solid var(--line-light);
+  }
+
+  /*
+    마지막 논문 아래쪽은
+    year-group의 padding-bottom이 담당
+  */
+  .paper:last-child {
+    padding-bottom: 0;
+  }
+
+  /* =========================================
+     PAPER TITLE
+     ========================================= */
+
+  .paper h2 {
+    max-width: 900px;
+
+    margin: 0;
+
+    font-size: clamp(23px, 2.35vw, 30px);
+    font-weight: 500;
+
+    line-height: 1.18;
+    letter-spacing: -0.035em;
+  }
+
+  .paper h2 a {
+    color: var(--text);
+
+    text-decoration: none;
+
+    transition: color 160ms ease;
+  }
+
+  .paper h2 a:hover {
+    color: var(--yonsei-blue);
+  }
+
+  /* =========================================
+     AUTHORS
+     ========================================= */
+
+  .authors {
+    margin: 24px 0 0;
+
+    color: var(--text-secondary);
+
+    font-size: 20px;
+    line-height: 1.6;
+  }
+
+  .authors strong {
+    color: var(--text);
+
+    font-weight: 600;
+  }
+
+  /* =========================================
+     JOURNAL / CONFERENCE NAME
+     ========================================= */
+
+  .venue {
+    margin: 10px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 20px;
+    font-style: italic;
+
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     RIGHT META
+     ========================================= */
+
+  .paper-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 20px;
+
+    padding-top: 5px;
+  }
+
+  /* JOURNAL / CONFERENCE */
+  .type {
+    color: #888888;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Paper ↗ */
+  .paper-link {
+    color: var(--yonsei-blue);
+
+    font-size: 17px;
+    font-weight: 600;
+
+    text-decoration: none;
+  }
+
+  .paper-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* =========================================
+     TABLET
+     ========================================= */
+
+  @media (max-width: 900px) {
+    .year-group {
+      grid-template-columns:
+        90px
+        minmax(0, 1fr);
+
+      gap: 24px;
+    }
+
+    .paper {
+      grid-template-columns:
+        minmax(0, 1fr)
+        100px;
+
+      gap: 32px;
+    }
+
+    .year {
+      font-size: 21px;
+    }
+
+    .authors,
+    .venue {
+      font-size: 16px;
+    }
+  }
+
+  /* =========================================
+     MOBILE
+     ========================================= */
+
+  @media (max-width: 720px) {
+    .research-header {
+      padding: 46px 0 72px;
+    }
+
+    .year-group {
+      grid-template-columns: 1fr;
+
+      gap: 28px;
+
+      /*
+        모바일 연도 그룹 여백도 같이 축소
+      */
+      padding: 36px 0 38px;
+    }
+
+    .year-group:first-child {
+      padding-top: 0;
+    }
+
+    .year {
+      font-size: 21px;
+    }
+
+    .paper {
+      grid-template-columns: 1fr;
+
+      gap: 24px;
+
+      padding-bottom: 28px;
+    }
+
+    .paper + .paper {
+      padding-top: 28px;
+    }
+
+    .paper h2 {
+      font-size: 25px;
+    }
+
+    .authors {
+      margin-top: 18px;
+
+      font-size: 16px;
+    }
+
+    .venue {
+      font-size: 16px;
+    }
+
+    .paper-meta {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding-top: 0;
+    }
+
+    .type {
+      font-size: 13px;
+    }
+
+    .paper-link {
+      font-size: 15px;
+    }
+  }
+</style>

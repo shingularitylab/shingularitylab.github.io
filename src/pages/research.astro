@@ -1,0 +1,176 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const researchAreas = [
+  {
+    number: "01",
+    title: "Neural Networks for Scalable Statistical Computing",
+  },
+  {
+    number: "02",
+    title: "High-Dimensional Bayesian Model Selection",
+  },
+  {
+    number: "03",
+    title: "Neural Networks for Tabular and Noisy Data",
+  },
+  {
+    number: "04",
+    title: "Dynamic Learning under Data Drift and Distribution Shift",
+  },
+];
+---
+
+<BaseLayout
+  title="Research"
+  description="Research at Shingularity Lab, Yonsei University"
+>
+  <!-- PAGE TITLE -->
+  <section class="research-header">
+    <h1 class="page-title">Research</h1>
+
+    <p class="intro">
+      We develop statistical and machine learning methods at the
+      intersection of{" "}
+      <strong>
+        High-Dimensional Statistics, Statistical Computing, and Neural Networks.
+      </strong>
+      {" "}
+      Our current research directions are summarized below.
+    </p>
+  </section>
+
+  <!-- RESEARCH AREAS -->
+  <section class="research-list">
+    {
+      researchAreas.map((area) => (
+        <article class="research-item">
+          <div class="research-number">
+            {area.number}
+          </div>
+
+          <h2>{area.title}</h2>
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  /* =========================================
+     PAGE HEADER
+     ========================================= */
+
+  .research-header {
+    padding: 58px 0 88px;
+  }
+
+  /*
+    Research 제목은 global.css의 .page-title 사용
+  */
+
+  .intro {
+    max-width: 700px;
+
+    margin: 46px 0 0;
+
+    color: #666666;
+
+    font-family: inherit;
+
+    font-size: clamp(16px, 1.3vw, 20px);
+    font-weight: 400;
+
+    line-height: 1.6;
+    letter-spacing: -0.02em;
+  }
+
+  .intro strong {
+    color: #111111;
+
+    font-weight: 600;
+  }
+
+  /* =========================================
+     RESEARCH LIST
+     ========================================= */
+
+  .research-list {
+    border-top: 1px solid var(--line);
+  }
+
+  .research-item {
+    display: grid;
+
+    grid-template-columns:
+      minmax(70px, 130px)
+      minmax(0, 1fr);
+
+    gap: 34px;
+
+    padding: 54px 0 60px;
+
+    border-bottom: 1px solid var(--line);
+  }
+
+  .research-number {
+    padding-top: 5px;
+
+    color: var(--yonsei-blue);
+
+    font-family: inherit;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+  }
+
+  .research-item h2 {
+    max-width: 900px;
+
+    margin: 0;
+
+    font-family: inherit;
+
+    font-size: clamp(20px, 2.2vw, 32px);
+    font-weight: 500;
+
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+  }
+
+  /* =========================================
+     MOBILE
+     ========================================= */
+
+  @media (max-width: 720px) {
+    .research-header {
+      padding: 46px 0 72px;
+    }
+
+    .intro {
+      margin-top: 34px;
+
+      font-size: 16px;
+    }
+
+    .research-item {
+      grid-template-columns: 1fr;
+
+      gap: 16px;
+
+      padding: 42px 0 46px;
+    }
+
+    .research-number {
+      padding-top: 0;
+
+      font-size: 14px;
+    }
+
+    .research-item h2 {
+      font-size: 26px;
+    }
+  }
+</style>

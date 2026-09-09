@@ -1,0 +1,789 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface PhotoEvent {
+  year: number;
+  title: string;
+  date: string;
+  images: (string | null)[];
+}
+
+const events: PhotoEvent[] = [
+      {
+    year: 2026,
+    title: "Graduation Ceremony",
+    date: "August 2026",
+    images: [
+      "/photos/2026/graduation-1.jpg",
+      "/photos/2026/graduation-2.jpg",
+      "/photos/2026/graduation-3.jpg",
+      "/photos/2026/graduation-4.jpg",
+      "/photos/2026/graduation-5.jpg",
+    ],
+  },
+    {
+    year: 2026,
+    title: "Farewell Dinner for Lukas",
+    date: "August 2026",
+    images: [
+      "/photos/2026/lukas-farewell-1.jpg"
+    ],
+  },
+   {
+    year: 2026,
+    title: "Futsal Day",
+    date: "August 2026",
+    images: [
+      "/photos/2026/futsal-day-1.jpg",
+    ],
+  },
+  {
+    year: 2026,
+    title: "Teacher's Day",
+    date: "May 2026",
+    images: [
+      "/photos/2026/teachers-day-1.jpg",
+      "/photos/2026/teachers-day-2.jpg",
+      "/photos/2026/teachers-day-3.jpg",
+    ],
+  }
+ 
+
+];
+
+const years = [...new Set(events.map((event) => event.year))].sort(
+  (a, b) => b - a
+);
+---
+
+<BaseLayout
+  title="Photos"
+  description="Photos from Shingularity Lab, Yonsei University"
+>
+  <!-- =========================================
+       PAGE TITLE
+       ========================================= -->
+
+  <section class="research-header">
+    <h1 class="page-title">Photos</h1>
+  </section>
+
+  <!-- =========================================
+       PHOTO ARCHIVE
+       ========================================= -->
+
+  <section class="years">
+    {
+      years.map((year) => (
+        <section class="year-group">
+          <!-- 같은 연도는 한 번만 표시 -->
+          <div class="event-year">
+            {year}
+          </div>
+
+          <div class="year-events">
+            {events
+              .filter((event) => event.year === year)
+              .map((event, eventIndex) => (
+                <section class="event">
+                  <div class="event-info">
+                    <h2>{event.title}</h2>
+                    <p>{event.date}</p>
+                  </div>
+
+                  <div
+                    class="event-gallery"
+                    data-gallery
+                    data-event-index={eventIndex}
+                    data-event-title={event.title}
+                  >
+                    {event.images.map((image, imageIndex) =>
+                      image ? (
+                        <button
+                          class="photo photo-button"
+                          type="button"
+                          data-photo
+                          data-image={image}
+                          data-image-index={imageIndex}
+                          aria-label={`Open ${event.title} photo ${imageIndex + 1}`}
+                        >
+                          <img
+                            src={image}
+                            alt={`${event.title} ${imageIndex + 1}`}
+                            loading="lazy"
+                          />
+                        </button>
+                      ) : (
+                        <div class="photo">
+                          <div class="placeholder">
+                            PHOTO {imageIndex + 1}
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </section>
+              ))}
+          </div>
+        </section>
+      ))
+    }
+  </section>
+
+  <!-- =========================================
+       LIGHTBOX
+       ========================================= -->
+
+  <div
+    class="lightbox"
+    id="lightbox"
+    hidden
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Photo viewer"
+  >
+    <button
+      class="lightbox-close"
+      id="lightbox-close"
+      type="button"
+      aria-label="Close photo viewer"
+    >
+      ×
+    </button>
+
+    <div class="lightbox-header">
+      <span id="lightbox-title"></span>
+      <span id="lightbox-counter"></span>
+    </div>
+
+    <button
+      class="lightbox-arrow lightbox-prev"
+      id="lightbox-prev"
+      type="button"
+      aria-label="Previous photo"
+    >
+      ‹
+    </button>
+
+    <div class="lightbox-stage" id="lightbox-stage">
+      <img
+        id="lightbox-image"
+        src=""
+        alt=""
+      />
+    </div>
+
+    <button
+      class="lightbox-arrow lightbox-next"
+      id="lightbox-next"
+      type="button"
+      aria-label="Next photo"
+    >
+      ›
+    </button>
+  </div>
+</BaseLayout>
+
+<style>
+  /* =========================================
+     PAGE HEADER
+     Research / People / Publications와 동일
+     ========================================= */
+
+  .research-header {
+    padding: 58px 0 88px;
+  }
+
+  /* =========================================
+     YEAR GROUP
+     ========================================= */
+
+  .years {
+    width: 100%;
+  }
+
+  .year-group {
+    display: grid;
+
+    grid-template-columns:
+      minmax(100px, 190px)
+      minmax(0, 1fr);
+
+    gap: 40px;
+
+    border-bottom: 1px solid var(--line);
+  }
+
+  .event-year {
+    color: var(--yonsei-blue);
+
+    font-size: 28px;
+    font-weight: 700;
+
+    letter-spacing: -0.02em;
+  }
+
+  .year-events {
+    min-width: 0;
+  }
+
+  /* =========================================
+     EVENT
+     ========================================= */
+
+  .event {
+    padding: 0 0 54px;
+  }
+
+  .event + .event {
+    padding-top: 42px;
+
+    border-top: 1px solid var(--line);
+  }
+
+  /* =========================================
+     EVENT INFO
+     ========================================= */
+
+  .event-info {
+    margin-bottom: 30px;
+  }
+
+  .event-info h2 {
+    margin: 0;
+
+    font-size: 25px;
+    font-weight: 600;
+
+    letter-spacing: -0.035em;
+  }
+
+  .event-info p {
+    margin: 8px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 16px;
+  }
+
+  /* =========================================
+     PHOTO GRID
+     ========================================= */
+
+  .event-gallery {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+  }
+
+  .photo {
+    width: 100%;
+
+    overflow: hidden;
+
+    aspect-ratio: 4 / 3;
+
+    background: var(--surface);
+  }
+
+  .photo-button {
+    margin: 0;
+    padding: 0;
+
+    border: none;
+
+    cursor: zoom-in;
+
+    appearance: none;
+  }
+
+  .photo img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 180ms ease;
+  }
+
+  .photo-button:hover img {
+    transform: scale(1.015);
+  }
+
+  .photo-button:focus-visible {
+    outline: 2px solid var(--yonsei-blue);
+    outline-offset: 3px;
+  }
+
+  .placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #b7b7b7;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
+  }
+
+  /* =========================================
+     LIGHTBOX
+     ========================================= */
+
+  .lightbox[hidden] {
+    display: none;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.92);
+  }
+
+  .lightbox-stage {
+    width: calc(100vw - 220px);
+    height: calc(100vh - 130px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-stage img {
+    display: block;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
+    user-select: none;
+  }
+
+  /* =========================================
+     LIGHTBOX HEADER
+     ========================================= */
+
+  .lightbox-header {
+    position: absolute;
+
+    top: 28px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+  }
+
+  #lightbox-title {
+    font-weight: 600;
+  }
+
+  #lightbox-counter {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* =========================================
+     CLOSE
+     ========================================= */
+
+  .lightbox-close {
+    position: absolute;
+
+    top: 20px;
+    right: 28px;
+
+    z-index: 2;
+
+    width: 46px;
+    height: 46px;
+
+    padding: 0;
+
+    border: none;
+
+    color: #ffffff;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 38px;
+    font-weight: 300;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  .lightbox-close:hover {
+    opacity: 0.7;
+  }
+
+  /* =========================================
+     ARROWS
+     ========================================= */
+
+  .lightbox-arrow {
+    position: absolute;
+
+    top: 50%;
+
+    z-index: 2;
+
+    transform: translateY(-50%);
+
+    width: 64px;
+    height: 80px;
+
+    padding: 0;
+
+    border: none;
+
+    color: #ffffff;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 72px;
+    font-weight: 200;
+    line-height: 1;
+
+    cursor: pointer;
+
+    opacity: 0.8;
+
+    transition: opacity 160ms ease;
+  }
+
+  .lightbox-arrow:hover {
+    opacity: 1;
+  }
+
+  .lightbox-prev {
+    left: 28px;
+  }
+
+  .lightbox-next {
+    right: 28px;
+  }
+
+  .lightbox-arrow.is-hidden {
+    display: none;
+  }
+
+  /* =========================================
+     TABLET
+     ========================================= */
+
+  @media (max-width: 900px) {
+    .year-group {
+      grid-template-columns:
+        90px
+        minmax(0, 1fr);
+
+      gap: 24px;
+    }
+
+    .event-gallery {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
+    .event-year {
+      font-size: 21px;
+    }
+
+    .lightbox-stage {
+      width: calc(100vw - 150px);
+    }
+
+    .lightbox-prev {
+      left: 12px;
+    }
+
+    .lightbox-next {
+      right: 12px;
+    }
+  }
+
+  /* =========================================
+     MOBILE
+     ========================================= */
+
+  @media (max-width: 720px) {
+    .research-header {
+      padding: 46px 0 72px;
+    }
+
+    .year-group {
+      grid-template-columns: 1fr;
+
+      gap: 28px;
+    }
+
+    .event-year {
+      font-size: 21px;
+    }
+
+    .event {
+      padding-bottom: 42px;
+    }
+
+    .event + .event {
+      padding-top: 36px;
+    }
+
+    .event-info {
+      margin-bottom: 24px;
+    }
+
+    .event-info h2 {
+      font-size: 22px;
+    }
+
+    .event-info p {
+      font-size: 14px;
+    }
+
+    .event-gallery {
+      grid-template-columns: 1fr;
+
+      gap: 16px;
+    }
+
+    /* LIGHTBOX */
+
+    .lightbox-stage {
+      width: calc(100vw - 40px);
+      height: calc(100vh - 140px);
+    }
+
+    .lightbox-header {
+      top: 24px;
+
+      max-width: calc(100vw - 120px);
+
+      font-size: 13px;
+    }
+
+    .lightbox-close {
+      top: 14px;
+      right: 14px;
+
+      font-size: 34px;
+    }
+
+    .lightbox-arrow {
+      top: auto;
+      bottom: 24px;
+
+      transform: none;
+
+      width: 54px;
+      height: 54px;
+
+      font-size: 54px;
+    }
+
+    .lightbox-prev {
+      left: calc(50% - 75px);
+    }
+
+    .lightbox-next {
+      right: calc(50% - 75px);
+    }
+  }
+</style>
+
+<script>
+  const lightbox = document.querySelector("#lightbox");
+  const lightboxImage = document.querySelector("#lightbox-image");
+  const lightboxTitle = document.querySelector("#lightbox-title");
+  const lightboxCounter = document.querySelector("#lightbox-counter");
+
+  const closeButton = document.querySelector("#lightbox-close");
+  const prevButton = document.querySelector("#lightbox-prev");
+  const nextButton = document.querySelector("#lightbox-next");
+  const lightboxStage = document.querySelector("#lightbox-stage");
+
+  let currentPhotos = [];
+  let currentIndex = 0;
+  let currentTitle = "";
+
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  function updateLightbox() {
+    if (!currentPhotos.length) return;
+
+    const currentPhoto = currentPhotos[currentIndex];
+    const imageSrc = currentPhoto.dataset.image;
+
+    lightboxImage.src = imageSrc;
+    lightboxImage.alt = `${currentTitle} ${currentIndex + 1}`;
+
+    lightboxTitle.textContent = currentTitle;
+    lightboxCounter.textContent =
+      `${currentIndex + 1} / ${currentPhotos.length}`;
+
+    const hasMultiplePhotos = currentPhotos.length > 1;
+
+    prevButton.classList.toggle(
+      "is-hidden",
+      !hasMultiplePhotos
+    );
+
+    nextButton.classList.toggle(
+      "is-hidden",
+      !hasMultiplePhotos
+    );
+  }
+
+  function openLightbox(clickedPhoto) {
+    const gallery = clickedPhoto.closest("[data-gallery]");
+
+    currentPhotos = Array.from(
+      gallery.querySelectorAll("[data-photo]")
+    );
+
+    currentIndex = currentPhotos.indexOf(clickedPhoto);
+    currentTitle = gallery.dataset.eventTitle || "";
+
+    updateLightbox();
+
+    lightbox.hidden = false;
+    lightbox.setAttribute("aria-hidden", "false");
+
+    document.body.style.overflow = "hidden";
+
+    closeButton.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.hidden = true;
+    lightbox.setAttribute("aria-hidden", "true");
+
+    lightboxImage.src = "";
+
+    document.body.style.overflow = "";
+  }
+
+  function showPrevious() {
+    if (currentPhotos.length <= 1) return;
+
+    currentIndex =
+      (currentIndex - 1 + currentPhotos.length) %
+      currentPhotos.length;
+
+    updateLightbox();
+  }
+
+  function showNext() {
+    if (currentPhotos.length <= 1) return;
+
+    currentIndex =
+      (currentIndex + 1) %
+      currentPhotos.length;
+
+    updateLightbox();
+  }
+
+  document
+    .querySelectorAll("[data-photo]")
+    .forEach((photo) => {
+      photo.addEventListener("click", () => {
+        openLightbox(photo);
+      });
+    });
+
+  closeButton.addEventListener("click", closeLightbox);
+  prevButton.addEventListener("click", showPrevious);
+  nextButton.addEventListener("click", showNext);
+
+  /* 검은 배경 클릭 시 닫기 */
+  lightbox.addEventListener("click", (event) => {
+    if (
+      event.target === lightbox ||
+      event.target === lightboxStage
+    ) {
+      closeLightbox();
+    }
+  });
+
+  /* 키보드 */
+  document.addEventListener("keydown", (event) => {
+    if (lightbox.hidden) return;
+
+    if (event.key === "Escape") {
+      closeLightbox();
+    }
+
+    if (event.key === "ArrowLeft") {
+      showPrevious();
+    }
+
+    if (event.key === "ArrowRight") {
+      showNext();
+    }
+  });
+
+  /* =========================================
+     MOBILE SWIPE
+     ========================================= */
+
+  lightboxStage.addEventListener(
+    "touchstart",
+    (event) => {
+      touchStartX = event.changedTouches[0].screenX;
+    },
+    { passive: true }
+  );
+
+  lightboxStage.addEventListener(
+    "touchend",
+    (event) => {
+      touchEndX = event.changedTouches[0].screenX;
+
+      const swipeDistance =
+        touchEndX - touchStartX;
+
+      if (Math.abs(swipeDistance) < 50) {
+        return;
+      }
+
+      if (swipeDistance > 0) {
+        showPrevious();
+      } else {
+        showNext();
+      }
+    },
+    { passive: true }
+  );
+</script>

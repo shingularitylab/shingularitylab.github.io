@@ -1,0 +1,740 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Student {
+  name: string;
+  program: string;
+  email: string;
+  image: string | null;
+}
+
+interface Alumni {
+  name: string;
+  role: string;
+  period: string;
+}
+
+const SHOW_PHD = false;
+const SHOW_ALUMNI = true;
+
+const professor = {
+  name: "Minsuk Shin",
+  position: "Assistant Professor",
+  affiliation: "Department of Applied Statistics / Statistics and Data Science",
+  university: "Yonsei University",
+  email: "minsuk.shin@yonsei.ac.kr",
+  scholar:
+    "https://scholar.google.co.uk/citations?user=C1cNUm0AAAAJ&hl=en",
+  image: null as string | null,
+};
+
+const phdStudents: Student[] = [];
+
+const msStudents: Student[] = [
+  {
+    name: "Hanseo Lee",
+    program: "M.S. Student",
+    email: "leehanseo@yonsei.ac.kr",
+    image: null,
+  },
+  {
+    name: "Hyunji Lee",
+    program: "M.S. Student",
+    email: "guswl1613@yonsei.ac.kr",
+    image: null,
+  },
+  {
+    name: "Mingu Jee",
+    program: "M.S. Student",
+    email: "jeemingujee@yonsei.ac.kr",
+    image: null,
+  },
+];
+
+const undergraduateInterns: Student[] = [
+  {
+    name: "Junhyeok Lee",
+    program: "Undergraduate Research Intern",
+    email: "cmillic20@yonsei.ac.kr",
+    image: null,
+  },
+  {
+    name: "Nayoung Kim",
+    program: "Undergraduate Research Intern",
+    email: "2023122064@yonsei.ac.kr",
+    image: null,
+  },
+];
+
+const alumni: Alumni[] = [
+  {
+    name: "Junseo (Lukas) Yoon",
+    role: "Undergraduate Intern",
+    period: "2026.06–08",
+  },
+];
+
+const getInitials = (name: string) =>
+  name
+    .split(" ")
+    .map((part) => part.replace(/[^A-Za-z]/g, ""))
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("");
+---
+
+<BaseLayout
+  title="People"
+  description="People at Shingularity Lab, Yonsei University"
+>
+  <!-- =========================================
+       PAGE TITLE
+       ========================================= -->
+
+  <section class="research-header">
+    <h1 class="page-title">People</h1>
+  </section>
+
+  <!-- =========================================
+       PROFESSOR
+       ========================================= -->
+
+  <section class="people-section professor-section">
+    <h2>Professor</h2>
+
+    <div class="professor">
+      <div class="professor-image">
+        {
+          professor.image ? (
+            <img
+              src={professor.image}
+              alt={professor.name}
+            />
+          ) : (
+            <div class="placeholder professor-placeholder">
+              {getInitials(professor.name)}
+            </div>
+          )
+        }
+      </div>
+
+      <div class="professor-info">
+        <h3>{professor.name}</h3>
+
+        <p class="position">
+          {professor.position}
+        </p>
+
+        <div class="meta">
+          <p>{professor.affiliation}</p>
+          <p>{professor.university}</p>
+        </div>
+
+        <div class="professor-links">
+          <a
+            class="email"
+            href={`mailto:${professor.email}`}
+          >
+            {professor.email}
+          </a>
+
+          <a
+            class="scholar"
+            href={professor.scholar}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Google Scholar ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       PH.D. STUDENTS
+       ========================================= -->
+
+  {
+    SHOW_PHD && (
+      <section class="people-section">
+        <h2>Ph.D. Students</h2>
+
+        <div class="people-grid">
+          {phdStudents.map((person) => (
+            <article class="person">
+              <div class="person-image">
+                {person.image ? (
+                  <img
+                    src={person.image}
+                    alt={person.name}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="placeholder">
+                    {getInitials(person.name)}
+                  </div>
+                )}
+              </div>
+
+              <h3>{person.name}</h3>
+
+              <a
+                class="email"
+                href={`mailto:${person.email}`}
+              >
+                {person.email}
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- =========================================
+       M.S. STUDENTS
+       ========================================= -->
+
+  <section class="people-section ms-section">
+    <h2>M.S. Students</h2>
+
+    <div class="people-grid">
+      {
+        msStudents.map((person) => (
+          <article class="person">
+            <div class="person-image">
+              {person.image ? (
+                <img
+                  src={person.image}
+                  alt={person.name}
+                  loading="lazy"
+                />
+              ) : (
+                <div class="placeholder">
+                  {getInitials(person.name)}
+                </div>
+              )}
+            </div>
+
+            <h3>{person.name}</h3>
+
+            <a
+              class="email"
+              href={`mailto:${person.email}`}
+            >
+              {person.email}
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- =========================================
+       UNDERGRADUATE INTERNS
+       ========================================= -->
+
+  <section class="people-section">
+    <h2>Undergraduate Interns</h2>
+
+    <div class="people-grid undergraduate-grid">
+      {
+        undergraduateInterns.map((person) => (
+          <article class="person">
+            <div class="person-image">
+              {person.image ? (
+                <img
+                  src={person.image}
+                  alt={person.name}
+                  loading="lazy"
+                />
+              ) : (
+                <div class="placeholder">
+                  {getInitials(person.name)}
+                </div>
+              )}
+            </div>
+
+            <h3>{person.name}</h3>
+
+            <a
+              class="email"
+              href={`mailto:${person.email}`}
+            >
+              {person.email}
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- =========================================
+       ALUMNI
+       ========================================= -->
+
+  {
+    SHOW_ALUMNI && (
+      <section class="people-section alumni-section">
+        <h2>Alumni</h2>
+
+        <div class="alumni-list">
+          {alumni.map((person) => (
+            <article class="alumni-item">
+              <h3>{person.name}</h3>
+
+              <div class="alumni-meta">
+                <span>{person.role}</span>
+                <span>{person.period}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  /* =========================================
+     PAGE HEADER
+     ========================================= */
+
+  .research-header {
+    padding: 58px 0 88px;
+  }
+
+  /* =========================================
+     PEOPLE SECTIONS
+     ========================================= */
+
+  .people-section {
+    padding-bottom: 120px;
+  }
+
+  .people-section h2 {
+    margin: 0 0 38px;
+    padding-top: 14px;
+
+    border-top: 1px solid var(--line);
+
+    font-size: 25px;
+    font-weight: 600;
+  }
+
+  .professor-section h2 {
+    padding-top: 0;
+
+    border-top: none;
+  }
+
+  .professor-section,
+  .ms-section {
+    padding-bottom: 80px;
+  }
+
+  /* =========================================
+     PROFESSOR
+     ========================================= */
+
+  .professor {
+    display: grid;
+
+    grid-template-columns:
+      minmax(240px, 360px)
+      minmax(0, 1fr);
+
+    gap: 56px;
+  }
+
+  .professor-image,
+  .person-image {
+    overflow: hidden;
+
+    background: var(--surface);
+  }
+
+  .professor-image {
+    aspect-ratio: 4 / 5;
+  }
+
+  .professor-image img,
+  .person-image img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+  }
+
+  .professor-info {
+    align-self: end;
+  }
+
+  .professor-info h3 {
+    margin: 0 0 14px;
+
+    font-size: clamp(36px, 3.8vw, 56px);
+    font-weight: 500;
+
+    letter-spacing: -0.045em;
+  }
+
+  .professor-info .position {
+    font-size: 25px;
+  }
+
+  .meta {
+    margin-top: 32px;
+
+    color: var(--text-muted);
+
+    font-size: 20px;
+    line-height: 1.55;
+  }
+
+  .meta p {
+    margin: 0;
+  }
+
+  /* =========================================
+     PROFESSOR LINKS
+     ========================================= */
+
+  .professor-links {
+    margin-top: 28px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 8px;
+  }
+
+  .professor-info .email {
+    margin-top: 0;
+
+    font-size: 20px;
+  }
+
+  .scholar {
+    display: block;
+
+    width: fit-content;
+
+    color: var(--text-muted);
+
+    font-size: 20px;
+
+    text-decoration: none;
+
+    transition: color 160ms ease;
+  }
+
+  .scholar:hover {
+    color: var(--yonsei-blue);
+  }
+
+  /* =========================================
+     COMMON INFO
+     ========================================= */
+
+  .position {
+    margin: 0;
+
+    color: var(--text-secondary);
+
+    font-size: 20px;
+  }
+
+  .email {
+    display: inline-block;
+
+    margin-top: 16px;
+
+    color: var(--text-muted);
+
+    font-size: 15px;
+
+    text-decoration: none;
+
+    transition: color 160ms ease;
+  }
+
+  .email:hover {
+    color: var(--yonsei-blue);
+  }
+
+  /* =========================================
+     STUDENT GRID
+     ========================================= */
+
+  .people-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 56px 24px;
+  }
+
+  .undergraduate-grid {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+  }
+
+  .person-image {
+    aspect-ratio: 4 / 5;
+
+    margin-bottom: 22px;
+  }
+
+  .person h3 {
+    margin: 0 0 8px;
+
+    font-size: 25px;
+    font-weight: 500;
+
+    letter-spacing: -0.03em;
+  }
+
+  /* =========================================
+     PLACEHOLDER
+     ========================================= */
+
+  .placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #b7b7b7;
+    background: var(--surface);
+
+    font-size: clamp(30px, 3.4vw, 50px);
+
+    user-select: none;
+  }
+
+  .professor-placeholder {
+    font-size: clamp(42px, 5vw, 68px);
+  }
+
+  /* =========================================
+     ALUMNI
+     사진 없이 텍스트만
+     ========================================= */
+
+  .alumni-section {
+    padding-bottom: 80px;
+  }
+
+  .alumni-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .alumni-item {
+    display: grid;
+
+    grid-template-columns:
+      minmax(280px, 1fr)
+      auto;
+
+    gap: 40px;
+
+    align-items: end;
+
+    padding: 20px 0;
+  }
+
+  .alumni-item + .alumni-item {
+    border-top: 1px solid var(--line-light);
+  }
+
+  .alumni-item:first-child {
+    padding-top: 0;
+  }
+
+  .alumni-item h3 {
+    margin: 0;
+
+    font-size: 25px;
+    font-weight: 500;
+
+    letter-spacing: -0.03em;
+  }
+
+  .alumni-meta {
+    display: flex;
+    align-items: center;
+
+    gap: 28px;
+
+    color: var(--text-muted);
+
+    font-size: 17px;
+
+    white-space: nowrap;
+  }
+
+  .alumni-meta span:first-child {
+    color: var(--text-secondary);
+  }
+
+  /* =========================================
+     TABLET
+     ========================================= */
+
+  @media (max-width: 900px) {
+    .professor {
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 36px;
+    }
+
+    .people-grid,
+    .undergraduate-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
+    .alumni-item {
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
+      gap: 24px;
+    }
+  }
+
+  /* =========================================
+     MOBILE
+     ========================================= */
+
+  @media (max-width: 720px) {
+    .research-header {
+      padding: 46px 0 72px;
+    }
+
+    .professor {
+      grid-template-columns: 1fr;
+
+      gap: 28px;
+    }
+
+    .professor-info {
+      align-self: auto;
+    }
+
+    .people-section {
+      padding-bottom: 90px;
+    }
+
+    .professor-section,
+    .ms-section {
+      padding-bottom: 60px;
+    }
+
+    .people-section h2 {
+      margin-bottom: 30px;
+
+      font-size: 22px;
+    }
+
+    .professor-info h3 {
+      font-size: 40px;
+    }
+
+    .professor-info .position {
+      font-size: 17px;
+    }
+
+    .meta {
+      font-size: 16px;
+    }
+
+    .professor-links {
+      margin-top: 24px;
+
+      gap: 7px;
+    }
+
+    .professor-info .email {
+      font-size: 15px;
+    }
+
+    .scholar {
+      font-size: 15px;
+    }
+
+    .people-grid,
+    .undergraduate-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 44px 16px;
+    }
+
+    .person h3 {
+      font-size: 20px;
+    }
+
+    .person .email {
+      font-size: 13px;
+    }
+
+    /* Alumni */
+
+    .alumni-section {
+      padding-bottom: 60px;
+    }
+
+    .alumni-item {
+      grid-template-columns: 1fr;
+
+      gap: 10px;
+
+      padding: 18px 0;
+    }
+
+    .alumni-item:first-child {
+      padding-top: 0;
+    }
+
+    .alumni-item h3 {
+      font-size: 20px;
+    }
+
+    .alumni-meta {
+      gap: 18px;
+
+      font-size: 15px;
+
+      white-space: normal;
+    }
+  }
+
+  /* =========================================
+     SMALL MOBILE
+     ========================================= */
+
+  @media (max-width: 480px) {
+    .people-grid,
+    .undergraduate-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .alumni-meta {
+      flex-direction: column;
+      align-items: flex-start;
+
+      gap: 5px;
+    }
+  }
+</style>
