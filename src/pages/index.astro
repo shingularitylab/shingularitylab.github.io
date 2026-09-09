@@ -25,10 +25,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 <style>
   .hero {
-    /*
-      Header 108px + Footer 약 70px를 제외한 영역 안에
-      홈 콘텐츠를 전부 넣음.
-    */
     min-height: calc(100svh - 178px);
 
     display: flex;
@@ -45,25 +41,26 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   .hero .eyebrow {
-  margin-bottom: 58px;
+    margin-bottom: 58px;
 
-  font-size: 12px;
-}
+    font-size: 12px;
+  }
 
   h1 {
-  max-width: 900px;
+    max-width: 900px;
 
-  margin: 0;
+    margin: 0;
 
-  font-size: clamp(58px, 8.5vw, 118px);
-  font-weight: 500;
+    font-size: clamp(58px, 8.5vw, 118px);
+    font-weight: 500;
 
-  line-height: 0.88;
-  letter-spacing: -0.07em;
-}
+    line-height: 0.88;
+    letter-spacing: -0.07em;
+  }
 
   .description {
-    margin: auto 0 0;
+    /* 기존 auto 제거 */
+    margin: 90px 0 0;
 
     color: #555555;
 
@@ -79,11 +76,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     color: var(--yonsei-blue);
   }
 
-  /*
-    global.css에는 일반 페이지용으로
-    footer margin-top: 150px가 들어가 있으므로
-    홈에서만 제거.
-  */
   :global(.site-footer) {
     margin-top: 0;
   }
@@ -106,7 +98,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     .description {
       max-width: 300px;
 
-      margin-top: auto;
+      margin-top: 70px;
 
       font-size: 18px;
       line-height: 1.5;
