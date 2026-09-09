@@ -30,7 +30,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <button type="submit">Unlock</button>
     </form>
 
-    <p id="page-unlock-message" class="page-unlock-message" aria-live="polite"></p>
+    <p
+      id="page-unlock-message"
+      class="page-unlock-message"
+      aria-live="polite"
+    ></p>
   </section>
 
   <section id="secure-content" class="secure-content" hidden>
@@ -64,6 +68,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               <th>이메일</th>
             </tr>
           </thead>
+
           <tbody id="member-table-body"></tbody>
         </table>
       </div>
@@ -82,28 +87,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   } from "../lib/secure";
 
   interface Member {
-    name: string;
-    studentId: string;
-    birthDate: string;
-    researcherId: string;
-    phone: string;
-    email: string;
+    이름: string;
+    학번: string;
+    생년월일: string;
+    연구자번호: string;
+    전화번호: string;
+    이메일: string;
   }
 
   const lockedView =
     document.querySelector<HTMLElement>("#locked-view");
+
   const secureContent =
     document.querySelector<HTMLElement>("#secure-content");
 
   const form =
     document.querySelector<HTMLFormElement>("#page-unlock-form");
+
   const passwordInput =
     document.querySelector<HTMLInputElement>("#page-unlock-password");
+
   const message =
     document.querySelector<HTMLElement>("#page-unlock-message");
 
   const timetableImage =
     document.querySelector<HTMLImageElement>("#timetable-image");
+
   const tableBody =
     document.querySelector<HTMLTableSectionElement>("#member-table-body");
 
@@ -116,9 +125,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     secureContent.hidden = locked;
   }
 
-  function addCell(row: HTMLTableRowElement, text: string) {
+  function addCell(
+    row: HTMLTableRowElement,
+    text: string,
+  ) {
     const cell = document.createElement("td");
+
     cell.textContent = text;
+
     row.appendChild(cell);
   }
 
@@ -130,79 +144,129 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     for (const member of members) {
       const row = document.createElement("tr");
 
-      addCell(row, member.name);
-      addCell(row, member.studentId);
-      addCell(row, member.birthDate);
-      addCell(row, member.researcherId);
-      addCell(row, member.phone);
+      addCell(row, member.이름);
+      addCell(row, member.학번);
+      addCell(row, member.생년월일);
+      addCell(row, member.연구자번호);
+      addCell(row, member.전화번호);
 
-      const emailCell = document.createElement("td");
-      const emailLink = document.createElement("a");
+      const emailCell =
+        document.createElement("td");
 
-      emailLink.href = `mailto:${member.email}`;
-      emailLink.textContent = member.email;
+      const emailLink =
+        document.createElement("a");
+
+      emailLink.href =
+        `mailto:${member.이메일}`;
+
+      emailLink.textContent =
+        member.이메일;
 
       emailCell.appendChild(emailLink);
+
       row.appendChild(emailCell);
 
       tableBody.appendChild(row);
     }
   }
 
-  async function loadSecureContent(password: string) {
-    const [imageResponse, membersText] = await Promise.all([
-      fetch("/secure/timetable.enc", { cache: "no-store" }),
-      decryptTextFromUrl("/secure/members.enc", password),
+  async function loadSecureContent(
+    password: string,
+  ) {
+    const [
+      imageResponse,
+      membersText,
+    ] = await Promise.all([
+      fetch(
+        "/secure/timetable.enc",
+        {
+          cache: "no-store",
+        },
+      ),
+
+      decryptTextFromUrl(
+        "/secure/members.enc",
+        password,
+      ),
     ]);
 
     if (!imageResponse.ok) {
-      throw new Error("Unable to load encrypted timetable.");
+      throw new Error(
+        "Unable to load encrypted timetable.",
+      );
     }
 
-    const encryptedImage = await imageResponse.text();
-    const imageBuffer = await decryptEnvelope(
-      encryptedImage,
-      password,
-    );
+    const encryptedImage =
+      await imageResponse.text();
 
-    const members = JSON.parse(membersText) as Member[];
+    const imageBuffer =
+      await decryptEnvelope(
+        encryptedImage,
+        password,
+      );
+
+    const members =
+      JSON.parse(membersText) as Member[];
 
     if (imageObjectUrl) {
-      URL.revokeObjectURL(imageObjectUrl);
+      URL.revokeObjectURL(
+        imageObjectUrl,
+      );
     }
 
-    imageObjectUrl = URL.createObjectURL(
-      new Blob([imageBuffer], { type: "image/png" }),
-    );
+    imageObjectUrl =
+      URL.createObjectURL(
+        new Blob(
+          [imageBuffer],
+          {
+            type: "image/png",
+          },
+        ),
+      );
 
     if (timetableImage) {
-      timetableImage.src = imageObjectUrl;
+      timetableImage.src =
+        imageObjectUrl;
     }
 
     renderMembers(members);
+
     setLocked(false);
   }
 
-  async function unlock(password: string) {
+  async function unlock(
+    password: string,
+  ) {
     if (!message) return;
 
-    message.textContent = "Checking...";
+    message.textContent =
+      "Checking...";
 
-    const valid = await validatePassword(password);
+    const valid =
+      await validatePassword(password);
 
     if (!valid) {
-      message.textContent = "Incorrect password.";
+      message.textContent =
+        "Incorrect password.";
+
       passwordInput?.select();
+
       return;
     }
 
     try {
-      await loadSecureContent(password);
+      await loadSecureContent(
+        password,
+      );
 
-      setSessionPassword(password);
+      setSessionPassword(
+        password,
+      );
+
       message.textContent = "";
     } catch {
       clearSessionPassword();
+
       setLocked(true);
 
       message.textContent =
@@ -210,34 +274,47 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     }
   }
 
-  form?.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  form?.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
 
-    if (!passwordInput) return;
+      if (!passwordInput) return;
 
-    const password = passwordInput.value;
+      const password =
+        passwordInput.value;
 
-    if (!password) return;
+      if (!password) return;
 
-    await unlock(password);
-  });
+      await unlock(password);
+    },
+  );
 
-  const existingPassword = getSessionPassword();
+  const existingPassword =
+    getSessionPassword();
 
   if (existingPassword) {
-    loadSecureContent(existingPassword).catch(() => {
+    loadSecureContent(
+      existingPassword,
+    ).catch(() => {
       clearSessionPassword();
+
       setLocked(true);
     });
   } else {
     setLocked(true);
   }
 
-  window.addEventListener("beforeunload", () => {
-    if (imageObjectUrl) {
-      URL.revokeObjectURL(imageObjectUrl);
-    }
-  });
+  window.addEventListener(
+    "beforeunload",
+    () => {
+      if (imageObjectUrl) {
+        URL.revokeObjectURL(
+          imageObjectUrl,
+        );
+      }
+    },
+  );
 </script>
 
 <style>
@@ -261,6 +338,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     font-size: 10px;
     font-weight: 700;
+
     letter-spacing: 0.16em;
   }
 
@@ -269,6 +347,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     font-size: clamp(28px, 3vw, 42px);
     font-weight: 500;
+
     letter-spacing: -0.04em;
   }
 
@@ -280,12 +359,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     color: var(--text-secondary);
 
     font-size: 17px;
+
     line-height: 1.6;
   }
 
   .page-unlock-form {
     display: grid;
-    grid-template-columns: minmax(0, 320px) auto;
+
+    grid-template-columns:
+      minmax(0, 320px)
+      auto;
+
     gap: 10px;
 
     margin-top: 30px;
@@ -298,9 +382,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     border: 1px solid var(--line);
     border-radius: 0;
+
     outline: none;
 
     background: #fff;
+
     color: var(--text);
 
     font: inherit;
@@ -308,20 +394,27 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   .page-unlock-form input:focus {
-    border-color: var(--yonsei-blue);
+    border-color:
+      var(--yonsei-blue);
   }
 
   .page-unlock-form button {
     padding: 0 20px;
 
-    border: 1px solid var(--yonsei-blue);
+    border:
+      1px solid
+      var(--yonsei-blue);
+
     border-radius: 0;
 
-    background: var(--yonsei-blue);
+    background:
+      var(--yonsei-blue);
+
     color: #fff;
 
     font: inherit;
     font-size: 14px;
+
     font-weight: 600;
 
     cursor: pointer;
@@ -347,8 +440,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   .section-heading {
     display: grid;
-    grid-template-columns: 70px minmax(0, 1fr);
+
+    grid-template-columns:
+      70px
+      minmax(0, 1fr);
+
     gap: 30px;
+
     align-items: baseline;
 
     margin-bottom: 26px;
@@ -359,21 +457,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     font-size: 13px;
     font-weight: 700;
+
     letter-spacing: 0.08em;
   }
 
   .section-heading h2 {
     margin: 0;
 
-    font-size: clamp(24px, 2.5vw, 34px);
+    font-size:
+      clamp(
+        24px,
+        2.5vw,
+        34px
+      );
+
     font-weight: 500;
+
     letter-spacing: -0.035em;
   }
 
   .timetable-frame {
     overflow: hidden;
 
-    border: 1px solid var(--line);
+    border:
+      1px solid
+      var(--line);
   }
 
   .timetable-frame img {
@@ -390,11 +498,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .member-table-wrap {
     overflow-x: auto;
 
-    border-top: 1px solid var(--text);
+    border-top:
+      1px solid
+      var(--text);
   }
 
   .member-table {
     width: 100%;
+
     min-width: 1020px;
 
     border-collapse: collapse;
@@ -406,9 +517,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .member-table td {
     padding: 17px 14px;
 
-    border-bottom: 1px solid var(--line-light);
+    border-bottom:
+      1px solid
+      var(--line-light);
 
     text-align: center;
+
     white-space: nowrap;
   }
 
@@ -417,11 +531,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     font-size: 12px;
     font-weight: 700;
+
     letter-spacing: 0.05em;
   }
 
   .member-table td {
-    color: var(--text-secondary);
+    color:
+      var(--text-secondary);
   }
 
   .member-table td:first-child {
@@ -431,7 +547,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   .member-table a {
-    color: var(--yonsei-blue);
+    color:
+      var(--yonsei-blue);
+
     text-decoration: none;
   }
 
@@ -458,6 +576,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     .section-heading {
       grid-template-columns: 1fr;
+
       gap: 10px;
 
       margin-bottom: 20px;
