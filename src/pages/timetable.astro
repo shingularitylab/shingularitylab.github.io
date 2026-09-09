@@ -56,12 +56,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <table class="member-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Student ID</th>
-              <th>Date of Birth</th>
-              <th>Researcher ID</th>
-              <th>Phone</th>
-              <th>Email</th>
+              <th>이름</th>
+              <th>학번</th>
+              <th>생년월일</th>
+              <th>연구자번호</th>
+              <th>전화번호</th>
+              <th>이메일</th>
             </tr>
           </thead>
           <tbody id="member-table-body"></tbody>
@@ -408,7 +408,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     border-bottom: 1px solid var(--line-light);
 
-    text-align: left;
+    text-align: center;
     white-space: nowrap;
   }
 
@@ -418,7 +418,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.05em;
-    text-transform: uppercase;
   }
 
   .member-table td {
