@@ -6,11 +6,13 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
 
 const {
   title = "Shingularity Lab",
   description = "Shingularity Lab at Yonsei University",
+  noindex = false,
 } = Astro.props;
 
 const pageTitle =
@@ -30,6 +32,15 @@ const pageTitle =
     />
 
     <meta name="description" content={description} />
+
+    {
+      noindex && (
+        <meta
+          name="robots"
+          content="noindex, nofollow, noarchive"
+        />
+      )
+    }
 
     <title>{pageTitle}</title>
   </head>

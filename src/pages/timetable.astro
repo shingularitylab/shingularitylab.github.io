@@ -1,0 +1,471 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Timetable"
+  description="Private lab timetable"
+  noindex={true}
+>
+  <section class="research-header">
+    <h1 class="page-title">Timetable</h1>
+  </section>
+
+  <section id="locked-view" class="locked-view">
+    <div class="private-label">PRIVATE</div>
+    <h2>Restricted access</h2>
+    <p>
+      Enter the lab password to view the timetable and member information.
+    </p>
+
+    <form id="page-unlock-form" class="page-unlock-form">
+      <input
+        id="page-unlock-password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Password"
+        aria-label="Password"
+        required
+      />
+      <button type="submit">Unlock</button>
+    </form>
+
+    <p id="page-unlock-message" class="page-unlock-message" aria-live="polite"></p>
+  </section>
+
+  <section id="secure-content" class="secure-content" hidden>
+    <div class="section-heading">
+      <span>01</span>
+      <h2>2026 Fall Lab Timetable</h2>
+    </div>
+
+    <div class="timetable-frame">
+      <img
+        id="timetable-image"
+        alt="2026 Fall Shingularity Lab timetable"
+      />
+    </div>
+
+    <div class="member-section">
+      <div class="section-heading">
+        <span>02</span>
+        <h2>Member Information</h2>
+      </div>
+
+      <div class="member-table-wrap">
+        <table class="member-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Student ID</th>
+              <th>Date of Birth</th>
+              <th>Researcher ID</th>
+              <th>Phone</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody id="member-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import {
+    clearSessionPassword,
+    decryptEnvelope,
+    decryptTextFromUrl,
+    getSessionPassword,
+    setSessionPassword,
+    validatePassword,
+  } from "../lib/secure";
+
+  interface Member {
+    name: string;
+    studentId: string;
+    birthDate: string;
+    researcherId: string;
+    phone: string;
+    email: string;
+  }
+
+  const lockedView =
+    document.querySelector<HTMLElement>("#locked-view");
+  const secureContent =
+    document.querySelector<HTMLElement>("#secure-content");
+
+  const form =
+    document.querySelector<HTMLFormElement>("#page-unlock-form");
+  const passwordInput =
+    document.querySelector<HTMLInputElement>("#page-unlock-password");
+  const message =
+    document.querySelector<HTMLElement>("#page-unlock-message");
+
+  const timetableImage =
+    document.querySelector<HTMLImageElement>("#timetable-image");
+  const tableBody =
+    document.querySelector<HTMLTableSectionElement>("#member-table-body");
+
+  let imageObjectUrl: string | null = null;
+
+  function setLocked(locked: boolean) {
+    if (!lockedView || !secureContent) return;
+
+    lockedView.hidden = !locked;
+    secureContent.hidden = locked;
+  }
+
+  function addCell(row: HTMLTableRowElement, text: string) {
+    const cell = document.createElement("td");
+    cell.textContent = text;
+    row.appendChild(cell);
+  }
+
+  function renderMembers(members: Member[]) {
+    if (!tableBody) return;
+
+    tableBody.replaceChildren();
+
+    for (const member of members) {
+      const row = document.createElement("tr");
+
+      addCell(row, member.name);
+      addCell(row, member.studentId);
+      addCell(row, member.birthDate);
+      addCell(row, member.researcherId);
+      addCell(row, member.phone);
+
+      const emailCell = document.createElement("td");
+      const emailLink = document.createElement("a");
+
+      emailLink.href = `mailto:${member.email}`;
+      emailLink.textContent = member.email;
+
+      emailCell.appendChild(emailLink);
+      row.appendChild(emailCell);
+
+      tableBody.appendChild(row);
+    }
+  }
+
+  async function loadSecureContent(password: string) {
+    const [imageResponse, membersText] = await Promise.all([
+      fetch("/secure/timetable.enc", { cache: "no-store" }),
+      decryptTextFromUrl("/secure/members.enc", password),
+    ]);
+
+    if (!imageResponse.ok) {
+      throw new Error("Unable to load encrypted timetable.");
+    }
+
+    const encryptedImage = await imageResponse.text();
+    const imageBuffer = await decryptEnvelope(
+      encryptedImage,
+      password,
+    );
+
+    const members = JSON.parse(membersText) as Member[];
+
+    if (imageObjectUrl) {
+      URL.revokeObjectURL(imageObjectUrl);
+    }
+
+    imageObjectUrl = URL.createObjectURL(
+      new Blob([imageBuffer], { type: "image/png" }),
+    );
+
+    if (timetableImage) {
+      timetableImage.src = imageObjectUrl;
+    }
+
+    renderMembers(members);
+    setLocked(false);
+  }
+
+  async function unlock(password: string) {
+    if (!message) return;
+
+    message.textContent = "Checking...";
+
+    const valid = await validatePassword(password);
+
+    if (!valid) {
+      message.textContent = "Incorrect password.";
+      passwordInput?.select();
+      return;
+    }
+
+    try {
+      await loadSecureContent(password);
+
+      setSessionPassword(password);
+      message.textContent = "";
+    } catch {
+      clearSessionPassword();
+      setLocked(true);
+
+      message.textContent =
+        "Unable to decrypt the private files.";
+    }
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!passwordInput) return;
+
+    const password = passwordInput.value;
+
+    if (!password) return;
+
+    await unlock(password);
+  });
+
+  const existingPassword = getSessionPassword();
+
+  if (existingPassword) {
+    loadSecureContent(existingPassword).catch(() => {
+      clearSessionPassword();
+      setLocked(true);
+    });
+  } else {
+    setLocked(true);
+  }
+
+  window.addEventListener("beforeunload", () => {
+    if (imageObjectUrl) {
+      URL.revokeObjectURL(imageObjectUrl);
+    }
+  });
+</script>
+
+<style>
+  .research-header {
+    padding: 58px 0 88px;
+  }
+
+  .locked-view,
+  .secure-content {
+    border-top: 1px solid var(--line);
+  }
+
+  .locked-view {
+    padding: 52px 0 90px;
+  }
+
+  .private-label {
+    margin-bottom: 17px;
+
+    color: var(--yonsei-blue);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+  }
+
+  .locked-view h2 {
+    margin: 0;
+
+    font-size: clamp(28px, 3vw, 42px);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+
+  .locked-view > p {
+    max-width: 620px;
+
+    margin: 22px 0 0;
+
+    color: var(--text-secondary);
+
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .page-unlock-form {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) auto;
+    gap: 10px;
+
+    margin-top: 30px;
+  }
+
+  .page-unlock-form input {
+    min-width: 0;
+
+    padding: 12px 13px;
+
+    border: 1px solid var(--line);
+    border-radius: 0;
+    outline: none;
+
+    background: #fff;
+    color: var(--text);
+
+    font: inherit;
+    font-size: 15px;
+  }
+
+  .page-unlock-form input:focus {
+    border-color: var(--yonsei-blue);
+  }
+
+  .page-unlock-form button {
+    padding: 0 20px;
+
+    border: 1px solid var(--yonsei-blue);
+    border-radius: 0;
+
+    background: var(--yonsei-blue);
+    color: #fff;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+  }
+
+  .page-unlock-message {
+    min-height: 20px;
+
+    margin: 10px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+  }
+
+  .secure-content {
+    padding-top: 46px;
+  }
+
+  .secure-content[hidden] {
+    display: none;
+  }
+
+  .section-heading {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 30px;
+    align-items: baseline;
+
+    margin-bottom: 26px;
+  }
+
+  .section-heading span {
+    color: var(--yonsei-blue);
+
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .section-heading h2 {
+    margin: 0;
+
+    font-size: clamp(24px, 2.5vw, 34px);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+  }
+
+  .timetable-frame {
+    overflow: hidden;
+
+    border: 1px solid var(--line);
+  }
+
+  .timetable-frame img {
+    display: block;
+
+    width: 100%;
+    height: auto;
+  }
+
+  .member-section {
+    margin-top: 78px;
+  }
+
+  .member-table-wrap {
+    overflow-x: auto;
+
+    border-top: 1px solid var(--text);
+  }
+
+  .member-table {
+    width: 100%;
+    min-width: 1020px;
+
+    border-collapse: collapse;
+
+    font-size: 15px;
+  }
+
+  .member-table th,
+  .member-table td {
+    padding: 17px 14px;
+
+    border-bottom: 1px solid var(--line-light);
+
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .member-table th {
+    color: var(--text-muted);
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .member-table td {
+    color: var(--text-secondary);
+  }
+
+  .member-table td:first-child {
+    color: var(--text);
+
+    font-weight: 600;
+  }
+
+  .member-table a {
+    color: var(--yonsei-blue);
+    text-decoration: none;
+  }
+
+  @media (max-width: 720px) {
+    .research-header {
+      padding: 46px 0 72px;
+    }
+
+    .locked-view {
+      padding: 42px 0 70px;
+    }
+
+    .page-unlock-form {
+      grid-template-columns: 1fr;
+    }
+
+    .page-unlock-form button {
+      min-height: 43px;
+    }
+
+    .secure-content {
+      padding-top: 38px;
+    }
+
+    .section-heading {
+      grid-template-columns: 1fr;
+      gap: 10px;
+
+      margin-bottom: 20px;
+    }
+
+    .member-section {
+      margin-top: 58px;
+    }
+  }
+</style>

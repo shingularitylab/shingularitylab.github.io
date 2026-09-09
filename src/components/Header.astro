@@ -7,7 +7,6 @@ const navItems = [
 ];
 
 const pathname = Astro.url.pathname;
-
 const isActive = (href: string) => pathname.startsWith(href);
 ---
 
@@ -16,7 +15,7 @@ const isActive = (href: string) => pathname.startsWith(href);
     SHINGULARITY LAB
   </a>
 
-  <nav class="site-nav" aria-label="Primary navigation">
+  <nav class="site-nav" aria-label="Primary navigation" id="site-nav">
     {
       navItems.map((item) => (
         <a
@@ -29,5 +28,329 @@ const isActive = (href: string) => pathname.startsWith(href);
         </a>
       ))
     }
+
+    <a
+      id="secure-timetable-link"
+      href="/timetable/"
+      class:list={{
+        active: isActive("/timetable/"),
+      }}
+      hidden
+    >
+      Timetable
+    </a>
   </nav>
 </header>
+
+<div
+  id="secure-unlock-overlay"
+  class="secure-unlock-overlay"
+  hidden
+  aria-hidden="true"
+>
+  <div class="secure-unlock-dialog" role="dialog" aria-modal="true" aria-labelledby="secure-unlock-title">
+    <button
+      id="secure-unlock-close"
+      class="secure-unlock-close"
+      type="button"
+      aria-label="Close"
+    >
+      ×
+    </button>
+
+    <div class="secure-unlock-eyebrow">PRIVATE</div>
+    <h2 id="secure-unlock-title">Lab access</h2>
+
+    <form id="secure-unlock-form">
+      <label for="secure-unlock-password">Password</label>
+
+      <div class="secure-unlock-row">
+        <input
+          id="secure-unlock-password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+        <button type="submit">Unlock</button>
+      </div>
+
+      <p id="secure-unlock-message" class="secure-unlock-message" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+  import {
+    getSessionPassword,
+    setSessionPassword,
+    validatePassword,
+  } from "../lib/secure";
+
+  const SECRET_SEQUENCE = "shingularity";
+
+  const timetableLink = document.querySelector<HTMLAnchorElement>(
+    "#secure-timetable-link"
+  );
+  const siteNav = document.querySelector<HTMLElement>("#site-nav");
+
+  const overlay = document.querySelector<HTMLElement>(
+    "#secure-unlock-overlay"
+  );
+  const closeButton = document.querySelector<HTMLButtonElement>(
+    "#secure-unlock-close"
+  );
+  const form = document.querySelector<HTMLFormElement>(
+    "#secure-unlock-form"
+  );
+  const passwordInput = document.querySelector<HTMLInputElement>(
+    "#secure-unlock-password"
+  );
+  const message = document.querySelector<HTMLElement>(
+    "#secure-unlock-message"
+  );
+
+  function showTimetableLink() {
+    if (!timetableLink) return;
+
+    timetableLink.hidden = false;
+    siteNav?.classList.add("secure-open");
+  }
+
+  function openUnlock() {
+    if (!overlay || !passwordInput || !message) return;
+
+    overlay.hidden = false;
+    overlay.setAttribute("aria-hidden", "false");
+    message.textContent = "";
+
+    window.setTimeout(() => passwordInput.focus(), 0);
+  }
+
+  function closeUnlock() {
+    if (!overlay || !passwordInput || !message) return;
+
+    overlay.hidden = true;
+    overlay.setAttribute("aria-hidden", "true");
+    passwordInput.value = "";
+    message.textContent = "";
+  }
+
+  if (getSessionPassword()) {
+    showTimetableLink();
+  }
+
+  window.addEventListener("shingularity:unlocked", showTimetableLink);
+
+  let typed = "";
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && overlay && !overlay.hidden) {
+      closeUnlock();
+      return;
+    }
+
+    const target = event.target as HTMLElement | null;
+    const isTypingField =
+      target?.tagName === "INPUT" ||
+      target?.tagName === "TEXTAREA" ||
+      target?.isContentEditable;
+
+    if (isTypingField) return;
+
+    if (event.key.length !== 1) return;
+
+    typed = (typed + event.key.toLowerCase()).slice(
+      -SECRET_SEQUENCE.length
+    );
+
+    if (typed === SECRET_SEQUENCE) {
+      typed = "";
+      openUnlock();
+    }
+  });
+
+  closeButton?.addEventListener("click", closeUnlock);
+
+  overlay?.addEventListener("click", (event) => {
+    if (event.target === overlay) {
+      closeUnlock();
+    }
+  });
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!passwordInput || !message) return;
+
+    const password = passwordInput.value;
+
+    if (!password) return;
+
+    message.textContent = "Checking...";
+
+    try {
+      const valid = await validatePassword(password);
+
+      if (!valid) {
+        message.textContent = "Incorrect password.";
+        passwordInput.select();
+        return;
+      }
+
+      setSessionPassword(password);
+      showTimetableLink();
+      closeUnlock();
+    } catch {
+      message.textContent =
+        "Unable to unlock. Check that the encrypted files exist.";
+    }
+  });
+</script>
+
+<style>
+  .secure-unlock-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  .secure-unlock-overlay[hidden] {
+    display: none;
+  }
+
+  .secure-unlock-dialog {
+    position: relative;
+
+    width: min(460px, 100%);
+
+    padding: 38px 0 0;
+
+    border-top: 1px solid var(--text);
+  }
+
+  .secure-unlock-close {
+    position: absolute;
+    top: 20px;
+    right: 0;
+
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--text);
+
+    font: inherit;
+    font-size: 28px;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  .secure-unlock-eyebrow {
+    margin-bottom: 18px;
+
+    color: var(--yonsei-blue);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+  }
+
+  .secure-unlock-dialog h2 {
+    margin: 0 0 36px;
+
+    font-size: 34px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+
+  .secure-unlock-dialog label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: var(--text-secondary);
+
+    font-size: 13px;
+  }
+
+  .secure-unlock-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .secure-unlock-row input {
+    min-width: 0;
+
+    padding: 12px 13px;
+
+    border: 1px solid var(--line);
+    border-radius: 0;
+    outline: none;
+
+    background: #fff;
+    color: var(--text);
+
+    font: inherit;
+    font-size: 15px;
+  }
+
+  .secure-unlock-row input:focus {
+    border-color: var(--yonsei-blue);
+  }
+
+  .secure-unlock-row button {
+    padding: 0 18px;
+
+    border: 1px solid var(--yonsei-blue);
+    border-radius: 0;
+
+    background: var(--yonsei-blue);
+    color: #fff;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+  }
+
+  .secure-unlock-message {
+    min-height: 20px;
+
+    margin: 11px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+  }
+
+  @media (max-width: 720px) {
+    :global(.site-nav.secure-open) {
+      gap: 8px;
+    }
+
+    :global(.site-nav.secure-open a) {
+      font-size: 11px;
+    }
+
+    .secure-unlock-dialog {
+      padding-top: 34px;
+    }
+
+    .secure-unlock-dialog h2 {
+      margin-bottom: 28px;
+      font-size: 30px;
+    }
+  }
+</style>
