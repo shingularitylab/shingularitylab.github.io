@@ -1,3 +1,4 @@
+
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -6,6 +7,9 @@ interface Student {
   program: string;
   email: string;
   image: string | null;
+  joined?: string;
+  coAdvisorName?: string;
+  coAdvisorUrl?: string;
 }
 
 interface Alumni {
@@ -14,7 +18,7 @@ interface Alumni {
   period: string;
 }
 
-const SHOW_PHD = false;
+const SHOW_PHD = true;
 const SHOW_ALUMNI = true;
 
 const professor = {
@@ -25,29 +29,39 @@ const professor = {
   email: "minsuk.shin@yonsei.ac.kr",
   scholar:
     "https://scholar.google.co.uk/citations?user=C1cNUm0AAAAJ&hl=en",
-  image: null as string | null,
+  image: "/people/MinsukShin.png" as string | null,
 };
 
-const phdStudents: Student[] = [];
+const phdStudents: Student[] = [
+  {
+    name: "Seoyeon Cho",
+    program: "Ph.D. Student",
+    email: "",
+    image: "/people/SeoyeonCho.jpeg",
+    joined: "Fall 2026",
+    coAdvisorName: "Prof. Ick Hoon Jin",
+    coAdvisorUrl: "https://sites.google.com/view/jinius-lab/home",
+  },
+];
 
 const msStudents: Student[] = [
   {
     name: "Hanseo Lee",
     program: "M.S. Student",
     email: "leehanseo@yonsei.ac.kr",
-    image: null,
+    image: "/people/HanseoLee.jpg",
   },
   {
     name: "Hyunji Lee",
     program: "M.S. Student",
     email: "guswl1613@yonsei.ac.kr",
-    image: null,
+    image: "/people/HyunjiLee.jpg",
   },
   {
     name: "Mingu Jee",
     program: "M.S. Student",
     email: "jeemingu@yonsei.ac.kr",
-    image: null,
+    image: "/people/MinguJee.png",
   },
 ];
 
@@ -56,13 +70,13 @@ const undergraduateInterns: Student[] = [
     name: "Junhyeok Lee",
     program: "Undergraduate Research Intern",
     email: "cmillic20@yonsei.ac.kr",
-    image: null,
+    image: "/people/JunhyeokLee.JPG",
   },
   {
     name: "Nayoung Kim",
     program: "Undergraduate Research Intern",
     email: "2023122064@yonsei.ac.kr",
-    image: null,
+    image: "/people/NayoungKim.jpg",
   },
 ];
 
@@ -179,12 +193,33 @@ const getInitials = (name: string) =>
 
               <h3>{person.name}</h3>
 
-              <a
-                class="email"
-                href={`mailto:${person.email}`}
-              >
-                {person.email}
-              </a>
+              {person.joined && (
+                <p class="phd-note">
+                  {person.program} · {person.joined}
+                </p>
+              )}
+
+              {person.coAdvisorName && person.coAdvisorUrl && (
+                <p class="phd-note">
+                  Co-advised by Prof. Minsuk Shin and{" "}
+                  <a
+                    href={person.coAdvisorUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {person.coAdvisorName} ↗
+                  </a>
+                </p>
+              )}
+
+              {person.email && (
+                <a
+                  class="email"
+                  href={`mailto:${person.email}`}
+                >
+                  {person.email}
+                </a>
+              )}
             </article>
           ))}
         </div>
@@ -325,7 +360,6 @@ const getInitials = (name: string) =>
 
   .professor-section h2 {
     padding-top: 0;
-
     border-top: none;
   }
 
@@ -340,18 +374,15 @@ const getInitials = (name: string) =>
 
   .professor {
     display: grid;
-
     grid-template-columns:
       minmax(240px, 360px)
       minmax(0, 1fr);
-
     gap: 56px;
   }
 
   .professor-image,
   .person-image {
     overflow: hidden;
-
     background: var(--surface);
   }
 
@@ -362,10 +393,8 @@ const getInitials = (name: string) =>
   .professor-image img,
   .person-image img {
     display: block;
-
     width: 100%;
     height: 100%;
-
     object-fit: cover;
   }
 
@@ -375,10 +404,8 @@ const getInitials = (name: string) =>
 
   .professor-info h3 {
     margin: 0 0 14px;
-
     font-size: clamp(36px, 3.8vw, 56px);
     font-weight: 500;
-
     letter-spacing: -0.045em;
   }
 
@@ -388,9 +415,7 @@ const getInitials = (name: string) =>
 
   .meta {
     margin-top: 32px;
-
     color: var(--text-muted);
-
     font-size: 20px;
     line-height: 1.55;
   }
@@ -405,31 +430,23 @@ const getInitials = (name: string) =>
 
   .professor-links {
     margin-top: 28px;
-
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
     gap: 8px;
   }
 
   .professor-info .email {
     margin-top: 0;
-
     font-size: 20px;
   }
 
   .scholar {
     display: block;
-
     width: fit-content;
-
     color: var(--text-muted);
-
     font-size: 20px;
-
     text-decoration: none;
-
     transition: color 160ms ease;
   }
 
@@ -443,27 +460,40 @@ const getInitials = (name: string) =>
 
   .position {
     margin: 0;
-
     color: var(--text-secondary);
-
     font-size: 20px;
   }
 
   .email {
     display: inline-block;
-
     margin-top: 16px;
-
     color: var(--text-muted);
-
     font-size: 15px;
-
     text-decoration: none;
-
     transition: color 160ms ease;
   }
 
   .email:hover {
+    color: var(--yonsei-blue);
+  }
+
+  /* =========================================
+     PH.D. STUDENTS
+     ========================================= */
+
+  .phd-note {
+    margin: 6px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .phd-note a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .phd-note a:hover {
     color: var(--yonsei-blue);
   }
 
@@ -473,10 +503,8 @@ const getInitials = (name: string) =>
 
   .people-grid {
     display: grid;
-
     grid-template-columns:
       repeat(3, minmax(0, 1fr));
-
     gap: 56px 24px;
   }
 
@@ -487,16 +515,13 @@ const getInitials = (name: string) =>
 
   .person-image {
     aspect-ratio: 4 / 5;
-
     margin-bottom: 22px;
   }
 
   .person h3 {
     margin: 0 0 8px;
-
     font-size: 25px;
     font-weight: 500;
-
     letter-spacing: -0.03em;
   }
 
@@ -507,16 +532,12 @@ const getInitials = (name: string) =>
   .placeholder {
     width: 100%;
     height: 100%;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     color: #b7b7b7;
     background: var(--surface);
-
     font-size: clamp(30px, 3.4vw, 50px);
-
     user-select: none;
   }
 
@@ -540,15 +561,11 @@ const getInitials = (name: string) =>
 
   .alumni-item {
     display: grid;
-
     grid-template-columns:
       minmax(280px, 1fr)
       auto;
-
     gap: 40px;
-
     align-items: end;
-
     padding: 20px 0;
   }
 
@@ -562,23 +579,17 @@ const getInitials = (name: string) =>
 
   .alumni-item h3 {
     margin: 0;
-
     font-size: 25px;
     font-weight: 500;
-
     letter-spacing: -0.03em;
   }
 
   .alumni-meta {
     display: flex;
     align-items: center;
-
     gap: 28px;
-
     color: var(--text-muted);
-
     font-size: 17px;
-
     white-space: nowrap;
   }
 
@@ -592,9 +603,7 @@ const getInitials = (name: string) =>
 
   @media (max-width: 900px) {
     .professor {
-      grid-template-columns:
-        1fr 1fr;
-
+      grid-template-columns: 1fr 1fr;
       gap: 36px;
     }
 
@@ -608,7 +617,6 @@ const getInitials = (name: string) =>
       grid-template-columns:
         minmax(0, 1fr)
         auto;
-
       gap: 24px;
     }
   }
@@ -624,7 +632,6 @@ const getInitials = (name: string) =>
 
     .professor {
       grid-template-columns: 1fr;
-
       gap: 28px;
     }
 
@@ -643,7 +650,6 @@ const getInitials = (name: string) =>
 
     .people-section h2 {
       margin-bottom: 30px;
-
       font-size: 22px;
     }
 
@@ -661,7 +667,6 @@ const getInitials = (name: string) =>
 
     .professor-links {
       margin-top: 24px;
-
       gap: 7px;
     }
 
@@ -677,7 +682,6 @@ const getInitials = (name: string) =>
     .undergraduate-grid {
       grid-template-columns:
         repeat(2, minmax(0, 1fr));
-
       gap: 44px 16px;
     }
 
@@ -697,9 +701,7 @@ const getInitials = (name: string) =>
 
     .alumni-item {
       grid-template-columns: 1fr;
-
       gap: 10px;
-
       padding: 18px 0;
     }
 
@@ -713,9 +715,7 @@ const getInitials = (name: string) =>
 
     .alumni-meta {
       gap: 18px;
-
       font-size: 15px;
-
       white-space: normal;
     }
   }
@@ -733,7 +733,6 @@ const getInitials = (name: string) =>
     .alumni-meta {
       flex-direction: column;
       align-items: flex-start;
-
       gap: 5px;
     }
   }
