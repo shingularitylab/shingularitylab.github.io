@@ -50,18 +50,21 @@ const msStudents: Student[] = [
     program: "M.S. Student",
     email: "leehanseo@yonsei.ac.kr",
     image: "/people/HanseoLee.jpg",
+    joined: "Spring 2023",
   },
   {
     name: "Hyunji Lee",
     program: "M.S. Student",
     email: "guswl1613@yonsei.ac.kr",
     image: "/people/HyunjiLee.jpg",
+    joined: "Spring 2026",
   },
   {
     name: "Mingu Jee",
     program: "M.S. Student",
-    email: "jeemingu@yonsei.ac.kr",
-    image: "/people/MinguJee.png",
+    email: "mingujee@yonsei.ac.kr",
+    image: "/people/MinguJee.jpg",
+    joined: "Fall 2026",
   },
 ];
 
@@ -71,12 +74,14 @@ const undergraduateInterns: Student[] = [
     program: "Undergraduate Research Intern",
     email: "cmillic20@yonsei.ac.kr",
     image: "/people/JunhyeokLee.JPG",
+    joined: "Jan 2026–Present",
   },
   {
     name: "Nayoung Kim",
     program: "Undergraduate Research Intern",
     email: "2023122064@yonsei.ac.kr",
     image: "/people/NayoungKim.jpg",
+    joined: "Sep 2026–Present",
   },
 ];
 
@@ -254,6 +259,12 @@ const getInitials = (name: string) =>
 
             <h3>{person.name}</h3>
 
+            {person.joined && (
+              <p class="phd-note">
+                {person.program} · {person.joined}
+              </p>
+            )}
+
             <a
               class="email"
               href={`mailto:${person.email}`}
@@ -292,6 +303,12 @@ const getInitials = (name: string) =>
             </div>
 
             <h3>{person.name}</h3>
+
+            {person.joined && (
+              <p class="phd-note">
+                {person.program} · {person.joined}
+              </p>
+            )}
 
             <a
               class="email"
