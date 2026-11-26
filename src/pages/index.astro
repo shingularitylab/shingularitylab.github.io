@@ -1,3 +1,4 @@
+
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
@@ -19,6 +20,33 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <span>×</span>
         Neural Networks
       </p>
+
+      <section class="current-research">
+        <div class="research-label">
+          CURRENT RESEARCH
+        </div>
+
+        <h2>
+          Foundation Models for High-Dimensional Regression
+        </h2>
+
+        <p class="research-subtitle">
+          Beyond Prediction: Learning to Estimate
+        </p>
+
+        <p class="research-description">
+          Developing foundation models that go beyond prediction
+          to estimate regression coefficients and uncover sparse
+          structures in high-dimensional data.
+        </p>
+
+        <a
+          class="research-link"
+          href="/research/#featured-research"
+        >
+          Explore our research ↗
+        </a>
+      </section>
     </div>
   </section>
 </BaseLayout>
@@ -75,7 +103,72 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     color: var(--yonsei-blue);
   }
 
-  /* 홈에서는 footer 위 여백을 완전히 제거 */
+  /* =========================================
+     CURRENT RESEARCH
+     ========================================= */
+
+  .current-research {
+    margin-top: 60px;
+    padding: 25px 0 20px;
+
+    border-top: 1px solid var(--line);
+  }
+
+  .research-label {
+    margin-bottom: 18px;
+
+    color: var(--yonsei-blue);
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .current-research h2 {
+    max-width: 1000px;
+    margin: 0;
+
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 500;
+
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+  }
+
+  .research-subtitle {
+    margin: 12px 0 0;
+
+    color: var(--text-secondary);
+
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .research-description {
+    max-width: 740px;
+    margin: 18px 0 0;
+
+    color: var(--text-secondary);
+
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .research-link {
+    display: inline-block;
+
+    margin-top: 20px;
+
+    color: var(--yonsei-blue);
+
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  .research-link:hover {
+    text-decoration: underline;
+  }
+
   :global(.site-footer) {
     margin-top: 0 !important;
   }
@@ -106,6 +199,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     .description span {
       padding: 0 5px;
+    }
+
+    .current-research {
+      margin-top: 48px;
+      padding-top: 22px;
+    }
+
+    .current-research h2 {
+      font-size: 28px;
+    }
+
+    .research-subtitle {
+      font-size: 16px;
+    }
+
+    .research-description {
+      font-size: 15px;
     }
   }
 </style>

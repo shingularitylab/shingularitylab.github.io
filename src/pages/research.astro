@@ -1,3 +1,4 @@
+
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -26,33 +27,144 @@ const researchAreas = [
   description="Research at Shingularity Lab, Yonsei University"
 >
   <!-- PAGE TITLE -->
+
   <section class="research-header">
     <h1 class="page-title">Research</h1>
 
     <p class="intro">
-  We develop statistical and machine learning methods at the intersection of
-  <br />
-  <strong>
-    High-Dimensional Statistics, Statistical Computing, and Neural Networks.
-  </strong>
-  <br />
-  Our current research directions are summarized below.
-</p>
+      We develop statistical and machine learning methods at the intersection of
+      <br />
+      <strong>
+        High-Dimensional Statistics, Statistical Computing, and Neural Networks.
+      </strong>
+      <br />
+      Our current research projects and directions are summarized below.
+    </p>
   </section>
 
-  <!-- RESEARCH AREAS -->
-  <section class="research-list">
-    {
-      researchAreas.map((area) => (
-        <article class="research-item">
-          <div class="research-number">
-            {area.number}
+  <!-- FEATURED RESEARCH -->
+
+  <section
+    class="featured-research"
+    id="featured-research"
+  >
+    <div class="featured-label">
+      FEATURED RESEARCH · ONGOING
+    </div>
+
+    <h2>
+      Foundation Models for High-Dimensional Regression
+    </h2>
+
+    <p class="featured-subtitle">
+      Beyond Prediction: Learning to Estimate
+    </p>
+
+    <div class="featured-content">
+      <p>
+        While existing tabular foundation models primarily focus
+        on prediction, our research aims to extend their
+        capabilities to statistical estimation.
+      </p>
+
+      <p>
+        We develop foundation models that jointly predict responses
+        and estimate regression coefficients in high-dimensional
+        settings. By pretraining neural networks on diverse
+        synthetic regression tasks, we aim to enable efficient
+        statistical estimation on previously unseen datasets.
+      </p>
+
+      <p>
+        Our research explores how statistical principles,
+        sparsity-inducing structures, and neural network
+        architectures can be integrated to develop scalable
+        methods for high-dimensional data analysis.
+      </p>
+    </div>
+
+    <!-- CONCEPTUAL FRAMEWORK -->
+
+    <div
+      class="framework"
+      aria-label="Conceptual framework for regression foundation models"
+    >
+      <div class="framework-training">
+        <div class="framework-box">
+          Diverse Synthetic Regression Tasks
+        </div>
+
+        <div class="training-arrow">
+          <span>↓</span>
+          <small>Pretraining</small>
+        </div>
+      </div>
+
+      <div class="framework-main">
+        <div class="framework-box">
+          <strong>Input Data</strong>
+          <span>Observed (X, y) and query features</span>
+        </div>
+
+        <div class="framework-arrow">
+          →
+        </div>
+
+        <div class="framework-model">
+          <strong>Foundation Model</strong>
+          <span>Learning to Estimate</span>
+        </div>
+
+        <div class="framework-arrow">
+          →
+        </div>
+
+        <div class="framework-outputs">
+          <div class="framework-box">
+            <strong>Response Prediction</strong>
+            <span>ŷ</span>
           </div>
 
-          <h2>{area.title}</h2>
-        </article>
-      ))
-    }
+          <div class="framework-box">
+            <strong>Coefficient Estimation</strong>
+            <span class="beta-hat" aria-label="beta hat">β</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="framework-caption">
+      Conceptual framework of our ongoing research.
+    </p>
+
+    <div class="research-keywords">
+      <span>Tabular Foundation Models</span>
+      <span>Sparse Regression</span>
+      <span>Statistical Computing</span>
+      <span>High-Dimensional Statistics</span>
+    </div>
+  </section>
+
+  <!-- RESEARCH DIRECTIONS -->
+
+  <section class="research-directions">
+    <h2 class="directions-title">
+      Research Directions
+    </h2>
+
+    <div class="research-list">
+      {
+        researchAreas.map((area) => (
+          <article class="research-item">
+            <div class="research-number">
+              {area.number}
+            </div>
+
+            <h3>{area.title}</h3>
+          </article>
+        ))
+      }
+    </div>
   </section>
 </BaseLayout>
 
@@ -64,10 +176,6 @@ const researchAreas = [
   .research-header {
     padding: 58px 0 88px;
   }
-
-  /*
-    Research 제목은 global.css의 .page-title 사용
-  */
 
   .intro {
     max-width: 700px;
@@ -92,8 +200,269 @@ const researchAreas = [
   }
 
   /* =========================================
-     RESEARCH LIST
+     FEATURED RESEARCH
      ========================================= */
+
+  .featured-research {
+    padding: 32px 0 60px;
+
+    border-top: 1px solid var(--line);
+
+    scroll-margin-top: 30px;
+  }
+
+  .featured-label {
+    margin-bottom: 24px;
+
+    color: var(--yonsei-blue);
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .featured-research h2 {
+    max-width: 1000px;
+    margin: 0;
+
+    font-size: clamp(30px, 4vw, 52px);
+    font-weight: 500;
+
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+
+  .featured-subtitle {
+    margin: 18px 0 0;
+
+    color: var(--text-secondary);
+
+    font-size: clamp(18px, 2vw, 24px);
+    letter-spacing: -0.025em;
+  }
+
+  .featured-content {
+    max-width: 850px;
+
+    margin-top: 34px;
+
+    color: var(--text-secondary);
+
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .featured-content p {
+    margin: 0 0 18px;
+  }
+
+  /* =========================================
+     CONCEPTUAL FRAMEWORK
+     ========================================= */
+
+  .framework {
+    max-width: 1050px;
+
+    margin: 46px 0 0;
+    padding: 36px 24px;
+
+    background: #fafafa;
+    border: 1px solid var(--line-light);
+  }
+
+  .framework-training {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-bottom: 12px;
+  }
+
+  .framework-training .framework-box {
+    width: 300px;
+    max-width: 100%;
+    min-height: 50px;
+  }
+
+  .training-arrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 10px 0 0;
+    color: var(--text-muted);
+  }
+
+  .training-arrow span {
+    font-size: 26px;
+  }
+
+  .training-arrow small {
+    font-size: 12px;
+  }
+
+  .framework-main {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      36px
+      minmax(0, 1.2fr)
+      36px
+      minmax(0, 1fr);
+
+    gap: 10px;
+    align-items: center;
+  }
+
+  .framework-box,
+  .framework-model {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 100px;
+    padding: 18px 12px;
+
+    text-align: center;
+
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .framework-box {
+    background: #ffffff;
+    border: 1px solid var(--line);
+
+    color: var(--text-secondary);
+  }
+
+  .framework-box strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .framework-box span {
+    font-size: 13px;
+  }
+
+  .framework-model {
+    min-height: 140px;
+
+    background: var(--yonsei-blue);
+    color: #ffffff;
+  }
+
+  .framework-model strong {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .framework-model span {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  .framework-arrow {
+    color: var(--text-muted);
+
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .framework-outputs {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .framework-outputs .framework-box {
+    min-height: 75px;
+
+    padding: 12px;
+  }
+
+  .framework-outputs .framework-box span {
+    color: var(--yonsei-blue);
+
+    font-size: 20px;
+  }
+
+  /* BETA HAT */
+
+  .framework-outputs .framework-box .beta-hat {
+    position: relative;
+    display: inline-block;
+
+    font-family: "Cambria Math", "Times New Roman", serif;
+    font-size: 20px;
+    font-style: italic;
+
+    line-height: 1.4;
+  }
+
+  .beta-hat::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: 6px;
+    height: 6px;
+
+    border-top: 1.5px solid currentColor;
+    border-left: 1.5px solid currentColor;
+
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .framework-caption {
+    margin: 12px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+  }
+
+  /* =========================================
+     RESEARCH KEYWORDS
+     ========================================= */
+
+  .research-keywords {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 10px 24px;
+
+    margin-top: 34px;
+
+    color: var(--yonsei-blue);
+
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* =========================================
+     RESEARCH DIRECTIONS
+     ========================================= */
+
+  .research-directions {
+    margin-top: 36px;
+  }
+
+  .directions-title {
+    margin: 0 0 28px;
+
+    font-size: 28px;
+    font-weight: 500;
+
+    letter-spacing: -0.035em;
+  }
 
   .research-list {
     border-top: 1px solid var(--line);
@@ -126,7 +495,7 @@ const researchAreas = [
     letter-spacing: 0.06em;
   }
 
-  .research-item h2 {
+  .research-item h3 {
     max-width: 900px;
 
     margin: 0;
@@ -155,6 +524,53 @@ const researchAreas = [
       font-size: 16px;
     }
 
+    .featured-research {
+      padding: 26px 0 42px;
+    }
+
+    .featured-research h2 {
+      font-size: 34px;
+    }
+
+    .featured-content {
+      font-size: 16px;
+    }
+
+    .framework {
+      padding: 24px 18px;
+    }
+
+    .framework-main {
+      grid-template-columns: 1fr;
+
+      gap: 14px;
+    }
+
+    .framework-arrow {
+      transform: rotate(90deg);
+    }
+
+    .framework-model {
+      min-height: 110px;
+    }
+
+    .framework-outputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .research-keywords {
+      font-size: 12px;
+    }
+
+    .research-directions {
+      margin-top: 24px;
+    }
+
+    .directions-title {
+      font-size: 25px;
+    }
+
     .research-item {
       grid-template-columns: 1fr;
 
@@ -169,8 +585,14 @@ const researchAreas = [
       font-size: 14px;
     }
 
-    .research-item h2 {
+    .research-item h3 {
       font-size: 26px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .framework-outputs {
+      grid-template-columns: 1fr;
     }
   }
 </style>
