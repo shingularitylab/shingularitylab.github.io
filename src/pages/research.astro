@@ -20,6 +20,29 @@ const researchAreas = [
     title: "Dynamic Learning under Data Drift and Distribution Shift",
   },
 ];
+
+const coefficients = [
+  0, 0, 27, 0, -19, 0, 0, 14,
+  0, 0, -25, 0, 0, 18, 0, 0,
+];
+
+const predictionPoints = [
+  [32, 91],
+  [42, 87],
+  [48, 74],
+  [57, 81],
+  [65, 64],
+  [75, 68],
+  [82, 57],
+  [90, 48],
+  [98, 55],
+  [109, 37],
+  [118, 41],
+  [128, 28],
+  [139, 32],
+  [149, 19],
+  [160, 23],
+];
 ---
 
 <BaseLayout
@@ -53,45 +76,68 @@ const researchAreas = [
     </div>
 
     <h2>
-      Foundation Models for High-Dimensional Regression
+      High-Dimensional Linear Regression Foundation Model
     </h2>
 
     <p class="featured-subtitle">
-      Beyond Prediction: Learning to Estimate
+      Learning to Estimate, Regularize, and Predict
     </p>
 
     <div class="featured-content">
       <p>
-        While existing tabular foundation models primarily focus
-        on prediction, our research aims to extend their
-        capabilities to statistical estimation.
+        Penalized linear regression is a fundamental tool for
+        high-dimensional data analysis. However, conventional
+        approaches require repeatedly solving optimization problems
+        and selecting appropriate penalty functions and tuning
+        parameters through cross-validation.
       </p>
 
       <p>
-        We develop foundation models that jointly predict responses
-        and estimate regression coefficients in high-dimensional
-        settings. By pretraining neural networks on diverse
-        synthetic regression tasks, we aim to enable efficient
-        statistical estimation on previously unseen datasets.
+        We develop foundation models pretrained on diverse synthetic
+        regression tasks to unify{" "}
+        <strong>coefficient estimation</strong>,{" "}
+        <strong>adaptive penalty learning</strong>,{" "}
+        and{" "}
+        <strong>response prediction</strong>.
+        One network estimates penalized regression coefficients for
+        a given penalty function and tuning parameter, while a
+        second network learns an appropriate penalty function and
+        tuning parameter directly from the observed data.
+        Together, these models aim to reduce the need for repeated
+        optimization and cross-validation.
       </p>
 
       <p>
-        Our research explores how statistical principles,
-        sparsity-inducing structures, and neural network
-        architectures can be integrated to develop scalable
-        methods for high-dimensional data analysis.
+        To enable scalable statistical computing in settings where
+        the number of features far exceeds the sample size, we
+        develop attention-free neural architectures that combine
+        classical statistical initialization, learned refinement,
+        and compact summary statistics. Our goal is to achieve
+        efficient inference on ordinary CPUs with computational
+        complexity that scales linearly with the number of features.
+      </p>
+
+      <p>
+        Our ongoing research investigates the stability of learned
+        estimators in high-dimensional settings, their dependence
+        on synthetic training distributions, and their ability
+        to generalize to previously unseen regression problems.
       </p>
     </div>
 
-    <!-- CONCEPTUAL FRAMEWORK -->
+    <!-- =========================================
+         CONCEPTUAL FRAMEWORK
+         ========================================= -->
 
     <div
       class="framework"
-      aria-label="Conceptual framework for regression foundation models"
+      aria-label="Conceptual framework for high-dimensional linear regression foundation models"
     >
+      <!-- PRETRAINING -->
+
       <div class="framework-training">
-        <div class="framework-box">
-          Diverse Synthetic Regression Tasks
+        <div class="framework-box training-box">
+          <strong>Diverse Synthetic Regression Tasks</strong>
         </div>
 
         <div class="training-arrow">
@@ -100,48 +146,263 @@ const researchAreas = [
         </div>
       </div>
 
+      <!-- INPUT / MODEL / OUTPUTS -->
+
       <div class="framework-main">
-        <div class="framework-box">
+
+        <!-- INPUT -->
+
+        <div class="framework-box input-box">
           <strong>Input Data</strong>
-          <span>Observed (X, y) and query features</span>
+          <span>Observed (X, y)</span>
+          <span>and query features</span>
         </div>
 
         <div class="framework-arrow">
           →
         </div>
+
+        <!-- FOUNDATION MODEL -->
 
         <div class="framework-model">
           <strong>Foundation Model</strong>
-          <span>Learning to Estimate</span>
+          <span>Beyond Prediction</span>
+          <small>Estimate · Regularize · Predict</small>
         </div>
 
-        <div class="framework-arrow">
-          →
+        <!-- OUTPUT CONNECTOR -->
+
+        <div class="output-connector">
+          <svg
+            viewBox="0 0 44 360"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M0 180 H20 M20 60 V300
+                 M20 60 H39
+                 M20 180 H39
+                 M20 300 H39"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              vector-effect="non-scaling-stroke"
+            />
+
+            <path
+              d="M33 55 L39 60 L33 65
+                 M33 175 L39 180 L33 185
+                 M33 295 L39 300 L33 305"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              vector-effect="non-scaling-stroke"
+            />
+          </svg>
         </div>
+
+        <!-- THREE OUTPUTS -->
 
         <div class="framework-outputs">
-          <div class="framework-box">
-            <strong>Response Prediction</strong>
-            <span>ŷ</span>
+
+          <!-- 01. COEFFICIENT ESTIMATION -->
+
+          <div class="framework-box output-box">
+            <strong>Coefficient Estimation</strong>
+
+            <svg
+              class="output-plot"
+              viewBox="0 0 200 100"
+              role="img"
+              aria-label="Illustrative sparse regression coefficients"
+            >
+              <line
+                x1="15" y1="50"
+                x2="185" y2="50"
+                class="plot-axis"
+              />
+
+              <line
+                x1="15" y1="12"
+                x2="15" y2="88"
+                class="plot-axis"
+              />
+
+              {
+                coefficients.map((value, i) => (
+                  <g>
+                    <line
+                      x1={24 + i * 10}
+                      y1="50"
+                      x2={24 + i * 10}
+                      y2={50 - value}
+                      class="coefficient-stem"
+                    />
+
+                    <circle
+                      cx={24 + i * 10}
+                      cy={50 - value}
+                      r={value === 0 ? 1.8 : 2.6}
+                      class="coefficient-point"
+                    />
+                  </g>
+                ))
+              }
+
+              <text
+                x="100" y="98"
+                text-anchor="middle"
+                class="plot-label"
+              >
+                Feature index
+              </text>
+            </svg>
+
+            <span class="output-description">
+              Sparse regression coefficients
+            </span>
           </div>
 
-          <div class="framework-box">
-            <strong>Coefficient Estimation</strong>
-            <span class="beta-hat" aria-label="beta hat">β</span>
+          <!-- 02. PENALTY FUNCTION LEARNING -->
+
+          <div class="framework-box output-box">
+            <strong>Penalty Function Learning</strong>
+
+            <svg
+              class="output-plot"
+              viewBox="0 0 200 100"
+              role="img"
+              aria-label="Illustrative learned penalty function"
+            >
+              <line
+                x1="24" y1="79"
+                x2="183" y2="79"
+                class="plot-axis"
+              />
+
+              <line
+                x1="24" y1="79"
+                x2="24" y2="9"
+                class="plot-axis"
+              />
+
+              <!-- Illustrative L1 reference -->
+
+              <path
+                d="M24 79 L174 12"
+                class="reference-curve"
+              />
+
+              <!-- Illustrative adaptive penalty -->
+
+              <path
+                d="M24 79
+                   C34 58, 46 43, 64 33
+                   S105 19, 132 17
+                   S160 16, 174 16"
+                class="penalty-curve"
+              />
+
+              <text
+                x="104" y="96"
+                text-anchor="middle"
+                class="plot-label"
+              >
+                Coefficient magnitude
+              </text>
+
+              <text
+                x="11" y="44"
+                text-anchor="middle"
+                transform="rotate(-90 11 44)"
+                class="plot-label"
+              >
+                Penalty
+              </text>
+            </svg>
+
+            <span class="output-description">
+              Data-adaptive regularization
+            </span>
           </div>
+
+          <!-- 03. RESPONSE PREDICTION -->
+
+          <div class="framework-box output-box">
+            <strong>Response Prediction</strong>
+
+            <svg
+              class="output-plot"
+              viewBox="0 0 200 120"
+              role="img"
+              aria-label="Illustrative predicted versus observed responses"
+            >
+              <line
+                x1="25" y1="97"
+                x2="179" y2="97"
+                class="plot-axis"
+              />
+
+              <line
+                x1="25" y1="97"
+                x2="25" y2="8"
+                class="plot-axis"
+              />
+
+              <path
+                d="M25 97 L174 8"
+                class="reference-curve"
+              />
+
+              {
+                predictionPoints.map(([x, y]) => (
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r="3"
+                    class="prediction-point"
+                  />
+                ))
+              }
+
+              <text
+                x="103" y="114"
+                text-anchor="middle"
+                class="plot-label"
+              >
+                Observed
+              </text>
+
+              <text
+                x="11" y="53"
+                text-anchor="middle"
+                transform="rotate(-90 11 53)"
+                class="plot-label"
+              >
+                Predicted
+              </text>
+            </svg>
+
+            <span class="output-description">
+              Out-of-sample prediction
+            </span>
+          </div>
+
         </div>
       </div>
     </div>
 
     <p class="framework-caption">
       Conceptual framework of our ongoing research.
+      The plots are illustrative and do not represent experimental results.
     </p>
 
     <div class="research-keywords">
       <span>Tabular Foundation Models</span>
+      <span>High-Dimensional Regression</span>
       <span>Sparse Regression</span>
+      <span>Penalty Learning</span>
       <span>Statistical Computing</span>
-      <span>High-Dimensional Statistics</span>
     </div>
   </section>
 
@@ -256,6 +517,11 @@ const researchAreas = [
     margin: 0 0 18px;
   }
 
+  .featured-content strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
   /* =========================================
      CONCEPTUAL FRAMEWORK
      ========================================= */
@@ -264,41 +530,61 @@ const researchAreas = [
     max-width: 1050px;
 
     margin: 46px 0 0;
-    padding: 36px 24px;
+    padding: 32px 24px;
 
     background: #fafafa;
     border: 1px solid var(--line-light);
   }
 
   .framework-training {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      36px
+      minmax(0, 1.2fr)
+      44px
+      minmax(0, 1.25fr);
+
+    column-gap: 10px;
+    justify-items: center;
 
     margin-bottom: 12px;
   }
 
-  .framework-training .framework-box {
-    width: 300px;
-    max-width: 100%;
-    min-height: 50px;
+  .training-box {
+    grid-column: 3;
+
+    width: 100%;
+    min-height: 50px !important;
+  }
+
+  .training-box strong {
+    font-weight: 500 !important;
   }
 
   .training-arrow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    grid-column: 3;
 
-    margin: 10px 0 0;
+    position: relative;
+
+    margin-top: 8px;
+
     color: var(--text-muted);
   }
 
   .training-arrow span {
-    font-size: 26px;
+    font-size: 28px;
   }
 
   .training-arrow small {
+    position: absolute;
+
+    left: 24px;
+    top: 8px;
+
     font-size: 12px;
+    white-space: nowrap;
   }
 
   .framework-main {
@@ -308,8 +594,8 @@ const researchAreas = [
       minmax(0, 1fr)
       36px
       minmax(0, 1.2fr)
-      36px
-      minmax(0, 1fr);
+      44px
+      minmax(0, 1.25fr);
 
     gap: 10px;
     align-items: center;
@@ -319,6 +605,7 @@ const researchAreas = [
   .framework-model {
     display: flex;
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
 
@@ -349,21 +636,30 @@ const researchAreas = [
     font-size: 13px;
   }
 
+  .input-box {
+    min-height: 135px;
+  }
+
   .framework-model {
-    min-height: 140px;
+    min-height: 200px;
 
     background: var(--yonsei-blue);
     color: #ffffff;
   }
 
   .framework-model strong {
-    font-size: 20px;
+    font-size: clamp(16px, 2vw, 22px);
     font-weight: 600;
   }
 
   .framework-model span {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .framework-model small {
     font-size: 12px;
-    opacity: 0.8;
+    opacity: 0.7;
   }
 
   .framework-arrow {
@@ -373,52 +669,114 @@ const researchAreas = [
     text-align: center;
   }
 
-  .framework-outputs {
+  /* =========================================
+     OUTPUT CONNECTOR
+     ========================================= */
+
+  .output-connector {
+    align-self: stretch;
+
     display: flex;
-    flex-direction: column;
+    align-items: center;
 
-    gap: 10px;
+    color: var(--text-muted);
   }
 
-  .framework-outputs .framework-box {
-    min-height: 75px;
+  .output-connector svg {
+    display: block;
 
-    padding: 12px;
+    width: 100%;
+    height: 100%;
   }
 
-  .framework-outputs .framework-box span {
+  /* =========================================
+     THREE OUTPUTS
+     ========================================= */
+
+  .framework-outputs {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+
+    gap: 12px;
+  }
+
+  .output-box {
+    min-width: 0;
+    min-height: 140px;
+
+    padding: 12px 10px;
+
+    gap: 5px;
+  }
+
+  .output-box strong {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .output-plot {
+    display: block;
+
+    width: 100%;
+    max-width: 190px;
+    height: 94px;
+
     color: var(--yonsei-blue);
-
-    font-size: 20px;
   }
 
-  /* BETA HAT */
+  .output-box .output-description {
+    color: var(--text-muted);
 
-  .framework-outputs .framework-box .beta-hat {
-    position: relative;
-    display: inline-block;
-
-    font-family: "Cambria Math", "Times New Roman", serif;
-    font-size: 20px;
-    font-style: italic;
-
+    font-size: 11px;
     line-height: 1.4;
   }
 
-  .beta-hat::before {
-    content: "";
+  /* =========================================
+     SVG PLOTS
+     ========================================= */
 
-    position: absolute;
-    top: 0;
-    left: 50%;
+  .plot-axis {
+    stroke: #b0b0b0;
+    stroke-width: 0.9;
+  }
 
-    width: 6px;
-    height: 6px;
+  .plot-label {
+    fill: #888888;
 
-    border-top: 1.5px solid currentColor;
-    border-left: 1.5px solid currentColor;
+    font-family: inherit;
+    font-size: 9px;
+  }
 
-    transform: translateX(-50%) rotate(45deg);
+  .coefficient-stem {
+    stroke: var(--yonsei-blue);
+    stroke-width: 1.8;
+  }
+
+  .coefficient-point {
+    fill: var(--yonsei-blue);
+  }
+
+  .penalty-curve {
+    fill: none;
+
+    stroke: var(--yonsei-blue);
+    stroke-width: 2.3;
+
+    stroke-linecap: round;
+  }
+
+  .reference-curve {
+    fill: none;
+
+    stroke: #b0b0b0;
+    stroke-width: 1.2;
+
+    stroke-dasharray: 4 4;
+  }
+
+  .prediction-point {
+    fill: var(--yonsei-blue);
+    opacity: 0.75;
   }
 
   .framework-caption {
@@ -427,6 +785,7 @@ const researchAreas = [
     color: var(--text-muted);
 
     font-size: 13px;
+    line-height: 1.5;
   }
 
   /* =========================================
@@ -540,6 +899,18 @@ const researchAreas = [
       padding: 24px 18px;
     }
 
+    .framework-training {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      gap: 8px;
+    }
+
+    .training-box {
+      max-width: 320px;
+    }
+
     .framework-main {
       grid-template-columns: 1fr;
 
@@ -550,13 +921,48 @@ const researchAreas = [
       transform: rotate(90deg);
     }
 
+    .input-box {
+      min-height: 100px;
+    }
+
     .framework-model {
-      min-height: 110px;
+      min-height: 130px;
+    }
+
+    .framework-model strong {
+      font-size: 20px;
+    }
+
+    .output-connector {
+      justify-content: center;
+
+      height: 30px;
+    }
+
+    .output-connector svg {
+      display: none;
+    }
+
+    .output-connector::after {
+      content: "↓";
+
+      font-size: 26px;
     }
 
     .framework-outputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+
+      gap: 12px;
+    }
+
+    .output-box {
+      min-height: 150px;
+    }
+
+    .output-plot {
+      max-width: 220px;
+      height: 110px;
     }
 
     .research-keywords {
@@ -587,12 +993,6 @@ const researchAreas = [
 
     .research-item h3 {
       font-size: 26px;
-    }
-  }
-
-  @media (max-width: 400px) {
-    .framework-outputs {
-      grid-template-columns: 1fr;
     }
   }
 </style>
